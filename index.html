@@ -33,22 +33,54 @@
 </head>
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <div id="app" class="container mx-auto px-4 py-8">
-        <header class="mb-8">
+        <!-- <header class="mb-8">
             <div class="flex justify-between items-center">
-                <!-- <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Traductor de Veu</h1> -->
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4 logo">
                     <img src="./imatges/veuenmoviment.png" alt="Example" width="72" height="72">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Veu en moviment</h1>
                         <h5 class="text-sm font-semibold text-gray-600 mb-0">Traductor de Veu en temps real</h5>
                     </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 menu">
                     <button 
                         @click="tema = tema === 'clar' ? 'fosc' : 'clar'; localStorage.setItem('tema', tema)"
                         class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
                         <span x-text="tema === 'clar' ? '🌙' : '☀️'"></span>
                     </button>
+                    <button 
+                        id="boto-configuracio"
+                        class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
+                        ⚙️
+                    </button>
+                </div>
+            </div>
+        </header> -->
+        <header class="mb-8">
+            <div class="flex flex-col md:flex-row items-start md:items-center w-full gap-4">
+        
+                <!-- LOGO -->
+                <div class="flex items-center space-x-4 logo">
+                    <img src="./imatges/veuenmoviment.png" alt="Example" width="72" height="72">
+                    <div>
+                        <h1 class="text-3xl font-bold text-gray-800 dark:text-white">
+                            Veu en moviment
+                        </h1>
+                        <h5 class="text-sm font-semibold text-gray-600 mb-0">
+                            Traductor de Veu en temps real
+                        </h5>
+                    </div>
+                </div>
+        
+                <!-- MENU -->
+                <!--  mt-2 només en mòbil | ml-auto a md+ per arraconar a la dreta -->
+                <div class="flex gap-2 menu mt-2 md:mt-0 md:ml-auto">
+                    <button 
+                        @click="tema = tema === 'clar' ? 'fosc' : 'clar'; localStorage.setItem('tema', tema)"
+                        class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
+                        <span x-text="tema === 'clar' ? '🌙' : '☀️'"></span>
+                    </button>
+        
                     <button 
                         id="boto-configuracio"
                         class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
