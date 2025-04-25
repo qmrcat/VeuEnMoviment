@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="ca" x-data="{ tema: localStorage.getItem('tema') || 'clar' }" :class="{ 'dark': tema === 'fosc' }">
+<!-- <html lang="ca" x-data="{ tema: localStorage.getItem('tema') || 'clar' }" :class="{ 'dark': tema === 'fosc' }"> -->
+<html lang="ca" >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,8 +12,16 @@
     <link rel="manifest" href="./site.webmanifest">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link href="./output.css" rel="stylesheet">
-    <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <!-- <script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script> -->
     <style>
+        /* Assegurar que les transicions de temes són suaus */
+        html.dark {
+            color-scheme: dark;
+        }
+        
+        body, html {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
         /* Estils per al loader */
         @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -21,6 +30,7 @@
         .animate-spin {
             animation: spin 1s linear infinite;
         }
+
     </style>
     <!-- <script>
         tailwind.config = {
@@ -50,17 +60,14 @@
                 </div>
         
                 <!-- MENU -->
-                <!--  mt-2 només en mòbil | ml-auto a md+ per arraconar a la dreta -->
                 <div class="flex gap-2 menu mt-2 md:mt-0 md:ml-auto">
-                    <button 
-                        @click="tema = tema === 'clar' ? 'fosc' : 'clar'; localStorage.setItem('tema', tema)"
-                        class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
-                        <span x-text="tema === 'clar' ? '🌙' : '☀️'"></span>
+                    <button id="tema-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
+                        <span id="tema-icon">🌙</span>
                     </button>
         
                     <button 
                         id="boto-configuracio"
-                        class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white">
+                        class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
                         ⚙️
                     </button>
                 </div>
@@ -73,7 +80,7 @@
             <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md z-10">
                 <div class="flex justify-between items-center mb-4">
                     <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Configuració API</h2>
-                    <button id="tanca-configuracio" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                    <button id="tanca-configuracio" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
                         ✕
                     </button>
                 </div>
@@ -92,6 +99,11 @@
                                 Mostrar clau
                             </label>
                         </div>
+                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-3">
+                            <p>La clau API es desarà localment al teu navegador i mai s'enviarà al nostre servidor.</p>
+                            <p class="mt-1">Si no tens una clau API d'OpenAI, pots obtenir-ne una a <a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-500 hover:underline">platform.openai.com</a> requereix un pagament</p>
+                            <p class="mt-1">Si vols consulta el consum o saber el crèdit que et queda ves a <a href="https://platform.openai.com/usage" target="_blank" class="text-blue-500 hover:underline">platform.openai.com/usage</a></p>
+                        </div>                        
                     </div>
                     <!-- Secció de configuració de veus -->
                     <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
@@ -106,7 +118,7 @@
                                 <select id="veu-original" 
                                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
                                                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                                focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                                     <optgroup label="Veus masculines">
                                         <option value="alloy">Alloy</option>
                                         <option value="echo">Echo</option>
@@ -133,7 +145,7 @@
                                 <select id="veu-traduida" 
                                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
                                                 bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                                focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                                focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" >
                                     <optgroup label="Veus masculines">
                                         <option value="alloy">Alloy</option>
                                         <option value="echo">Echo</option>
@@ -153,13 +165,155 @@
                             </div>
                         </div>
                     </div>                    
-                    <div class="text-sm text-gray-500 dark:text-gray-400">
-                        <p>La clau API es desarà localment al teu navegador i mai s'enviarà al nostre servidor.</p>
-                        <p class="mt-1">Si no tens una clau API d'OpenAI, pots obtenir-ne una a <a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-500 hover:underline">platform.openai.com</a></p>
+
+                    <!-- Secció de configuració d'idiomes -->
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                    <h3 class="text-md font-semibold text-gray-800 dark:text-white mb-3">Configuració d'idiomes</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- idioma original -->
+                        <div>
+                            <label for="idioma-original" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Idioma original
+                            </label>
+                            <select id="idioma-original" 
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                            focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                <option value="ca">Català</option>
+                                <option value="en">Anglès</option>
+                                <option value="af">Afrikaans</option>
+                                <option value="de">Alemany</option>
+                                <option value="en">Anglès</option>
+                                <option value="ar">Àrab</option>
+                                <option value="hy">Armeni</option>
+                                <option value="az">Azerbaidjanès</option>
+                                <option value="be">Bielorús</option>
+                                <option value="bs">Bosnià</option>
+                                <option value="bg">Búlgar</option>
+                                <option value="cs">Txec</option>
+                                <option value="hr">Croat</option>
+                                <option value="da">Danès</option>
+                                <option value="es">Castellà</option>
+                                <option value="et">Estonià</option>
+                                <option value="fi">Finès</option>
+                                <option value="fr">Francès</option>
+                                <option value="cy">Gal·lès</option>
+                                <option value="gl">Gallec</option>
+                                <option value="el">Grec</option>
+                                <option value="he">Hebreu</option>
+                                <option value="hi">Hindi</option>
+                                <option value="hu">Hongarès</option>
+                                <option value="is">Islandès</option>
+                                <option value="id">Indonesi</option>
+                                <option value="it">Italià</option>
+                                <option value="ja">Japonès</option>
+                                <option value="kk">Kazakh</option>
+                                <option value="kn">Kannada</option>
+                                <option value="ko">Coreà</option>
+                                <option value="lv">Letó</option>
+                                <option value="lt">Lituà</option>
+                                <option value="mk">Macedoni</option>
+                                <option value="ms">Malai</option>
+                                <option value="mi">Maori</option>
+                                <option value="mr">Marathi</option>
+                                <option value="ne">Nepalès</option>
+                                <option value="no">Noruec</option>
+                                <option value="fa">Persa</option>
+                                <option value="pl">Polonès</option>
+                                <option value="pt">Portuguès</option>
+                                <option value="ro">Romanès</option>
+                                <option value="ru">Rus</option>
+                                <option value="sk">Eslovac</option>
+                                <option value="sl">Eslovè</option>
+                                <option value="sr">Serbi</option>
+                                <option value="sw">Suahili</option>
+                                <option value="sv">Suec</option>
+                                <option value="tl">Tagal</option>
+                                <option value="ta">Tàmil</option>
+                                <option value="th">Tai</option>
+                                <option value="tr">Turc</option>
+                                <option value="uk">Ucraïnès</option>
+                                <option value="ur">Urdú</option>
+                                <option value="vi">Vietnamita</option>
+                                <option value="zh">Xinès</option>  
+                            </select>
+                        </div>
+                        
+                        <!-- Veu per idioma traduït -->
+                        <div>
+                            <label for="idioma-traduccio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                               Idioma a traduïr
+                            </label>
+                            <select id="idioma-traduccio" 
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                            focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" >
+                                <option value="ca">Català</option>
+                                <option value="af">Afrikaans</option>
+                                <option value="de">Alemany</option>
+                                <option value="en">Anglès</option>
+                                <option value="ar">Àrab</option>
+                                <option value="hy">Armeni</option>
+                                <option value="az">Azerbaidjanès</option>
+                                <option value="be">Bielorús</option>
+                                <option value="bs">Bosnià</option>
+                                <option value="bg">Búlgar</option>
+                                <option value="cs">Txec</option>
+                                <option value="hr">Croat</option>
+                                <option value="da">Danès</option>
+                                <option value="es">Castellà</option>
+                                <option value="et">Estonià</option>
+                                <option value="fi">Finès</option>
+                                <option value="fr">Francès</option>
+                                <option value="cy">Gal·lès</option>
+                                <option value="gl">Gallec</option>
+                                <option value="el">Grec</option>
+                                <option value="he">Hebreu</option>
+                                <option value="hi">Hindi</option>
+                                <option value="hu">Hongarès</option>
+                                <option value="is">Islandès</option>
+                                <option value="id">Indonesi</option>
+                                <option value="it">Italià</option>
+                                <option value="ja">Japonès</option>
+                                <option value="kk">Kazakh</option>
+                                <option value="kn">Kannada</option>
+                                <option value="ko">Coreà</option>
+                                <option value="lv">Letó</option>
+                                <option value="lt">Lituà</option>
+                                <option value="mk">Macedoni</option>
+                                <option value="ms">Malai</option>
+                                <option value="mi">Maori</option>
+                                <option value="mr">Marathi</option>
+                                <option value="ne">Nepalès</option>
+                                <option value="no">Noruec</option>
+                                <option value="fa">Persa</option>
+                                <option value="pl">Polonès</option>
+                                <option value="pt">Portuguès</option>
+                                <option value="ro">Romanès</option>
+                                <option value="ru">Rus</option>
+                                <option value="sk">Eslovac</option>
+                                <option value="sl">Eslovè</option>
+                                <option value="sr">Serbi</option>
+                                <option value="sw">Suahili</option>
+                                <option value="sv">Suec</option>
+                                <option value="tl">Tagal</option>
+                                <option value="ta">Tàmil</option>
+                                <option value="th">Tai</option>
+                                <option value="tr">Turc</option>
+                                <option value="uk">Ucraïnès</option>
+                                <option value="ur">Urdú</option>
+                                <option value="vi">Vietnamita</option>
+                                <option value="zh">Xinès</option>  
+                            </select>
+                        </div>
                     </div>
+                </div>                    
+                
+
                     <button type="submit" 
                             class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500  cursor-pointer">
                         Desar configuració
                     </button>
                 </form>
@@ -177,7 +331,7 @@
                 <div class="ml-3">
                     <p class="text-sm text-yellow-700 dark:text-yellow-200">
                         Necessites configurar la teva clau API d'OpenAI per utilitzar l'aplicació.
-                        <button id="configura-api" class="font-medium underline ml-1 focus:outline-none">
+                        <button id="configura-api" class="font-medium underline ml-1 focus:outline-none  cursor-pointer">
                             Configurar ara
                         </button>
                     </p>
@@ -196,18 +350,63 @@
                         <select id="idioma-origen" 
                                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
                                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <option value="ca">Català</option>
-                            <option value="es">Castellà</option>
-                            <option value="en">Anglès</option>
-                            <option value="fr">Francès</option>
+                            <option value="af">Afrikaans</option>
                             <option value="de">Alemany</option>
+                            <option value="en">Anglès</option>
+                            <option value="ar">Àrab</option>
+                            <option value="hy">Armeni</option>
+                            <option value="az">Azerbaidjanès</option>
+                            <option value="be">Bielorús</option>
+                            <option value="bs">Bosnià</option>
+                            <option value="bg">Búlgar</option>
+                            <option value="cs">Txec</option>
+                            <option value="hr">Croat</option>
+                            <option value="da">Danès</option>
+                            <option value="es">Castellà</option>
+                            <option value="et">Estonià</option>
+                            <option value="fi">Finès</option>
+                            <option value="fr">Francès</option>
+                            <option value="cy">Gal·lès</option>
+                            <option value="gl">Gallec</option>
+                            <option value="el">Grec</option>
+                            <option value="he">Hebreu</option>
+                            <option value="hi">Hindi</option>
+                            <option value="hu">Hongarès</option>
+                            <option value="is">Islandès</option>
+                            <option value="id">Indonesi</option>
                             <option value="it">Italià</option>
-                            <option value="pt">Portuguès</option>
-                            <option value="nl">Holandès</option>
-                            <option value="ru">Rus</option>
                             <option value="ja">Japonès</option>
-                            <option value="zh">Xinès</option>
+                            <option value="kk">Kazakh</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ko">Coreà</option>
+                            <option value="lv">Letó</option>
+                            <option value="lt">Lituà</option>
+                            <option value="mk">Macedoni</option>
+                            <option value="ms">Malai</option>
+                            <option value="mi">Maori</option>
+                            <option value="mr">Marathi</option>
+                            <option value="ne">Nepalès</option>
+                            <option value="no">Noruec</option>
+                            <option value="fa">Persa</option>
+                            <option value="pl">Polonès</option>
+                            <option value="pt">Portuguès</option>
+                            <option value="ro">Romanès</option>
+                            <option value="ru">Rus</option>
+                            <option value="sk">Eslovac</option>
+                            <option value="sl">Eslovè</option>
+                            <option value="sr">Serbi</option>
+                            <option value="sw">Suahili</option>
+                            <option value="sv">Suec</option>
+                            <option value="tl">Tagal</option>
+                            <option value="ta">Tàmil</option>
+                            <option value="th">Tai</option>
+                            <option value="tr">Turc</option>
+                            <option value="uk">Ucraïnès</option>
+                            <option value="ur">Urdú</option>
+                            <option value="vi">Vietnamita</option>
+                            <option value="zh">Xinès</option>                  
                         </select>
                     </div>
                     <div>
@@ -217,18 +416,63 @@
                         <select id="idioma-desti" 
                                 class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
                                         bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                        focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="en">Anglès</option>
-                            <option value="es">Castellà</option>
+                                        focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
                             <option value="ca">Català</option>
-                            <option value="fr">Francès</option>
+                            <option value="af">Afrikaans</option>
                             <option value="de">Alemany</option>
+                            <option value="en">Anglès</option>
+                            <option value="ar">Àrab</option>
+                            <option value="hy">Armeni</option>
+                            <option value="az">Azerbaidjanès</option>
+                            <option value="be">Bielorús</option>
+                            <option value="bs">Bosnià</option>
+                            <option value="bg">Búlgar</option>
+                            <option value="cs">Txec</option>
+                            <option value="hr">Croat</option>
+                            <option value="da">Danès</option>
+                            <option value="es">Castellà</option>
+                            <option value="et">Estonià</option>
+                            <option value="fi">Finès</option>
+                            <option value="fr">Francès</option>
+                            <option value="cy">Gal·lès</option>
+                            <option value="gl">Gallec</option>
+                            <option value="el">Grec</option>
+                            <option value="he">Hebreu</option>
+                            <option value="hi">Hindi</option>
+                            <option value="hu">Hongarès</option>
+                            <option value="is">Islandès</option>
+                            <option value="id">Indonesi</option>
                             <option value="it">Italià</option>
-                            <option value="pt">Portuguès</option>
-                            <option value="nl">Holandès</option>
-                            <option value="ru">Rus</option>
                             <option value="ja">Japonès</option>
-                            <option value="zh">Xinès</option>
+                            <option value="kk">Kazakh</option>
+                            <option value="kn">Kannada</option>
+                            <option value="ko">Coreà</option>
+                            <option value="lv">Letó</option>
+                            <option value="lt">Lituà</option>
+                            <option value="mk">Macedoni</option>
+                            <option value="ms">Malai</option>
+                            <option value="mi">Maori</option>
+                            <option value="mr">Marathi</option>
+                            <option value="ne">Nepalès</option>
+                            <option value="no">Noruec</option>
+                            <option value="fa">Persa</option>
+                            <option value="pl">Polonès</option>
+                            <option value="pt">Portuguès</option>
+                            <option value="ro">Romanès</option>
+                            <option value="ru">Rus</option>
+                            <option value="sk">Eslovac</option>
+                            <option value="sl">Eslovè</option>
+                            <option value="sr">Serbi</option>
+                            <option value="sw">Suahili</option>
+                            <option value="sv">Suec</option>
+                            <option value="tl">Tagal</option>
+                            <option value="ta">Tàmil</option>
+                            <option value="th">Tai</option>
+                            <option value="tr">Turc</option>
+                            <option value="uk">Ucraïnès</option>
+                            <option value="ur">Urdú</option>
+                            <option value="vi">Vietnamita</option>
+                            <option value="zh">Xinès</option>  
                         </select>
                     </div>
                 </div>
@@ -236,13 +480,13 @@
                     <!-- Modificació: Afegir botons per alternar entre modes -->
                     <div class="flex justify-center mb-4">
                         <div class="inline-flex rounded-md" role="group">
-                            <button id="mode-microfon" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-l-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-700">
+                            <button id="mode-microfon" type="button" class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-l-lg hover:bg-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:bg-blue-700 cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 inline-block" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd" />
                                 </svg>
                                 Micròfon
                             </button>
-                            <button id="mode-text" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600">
+                            <button id="mode-text" type="button" class="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-r-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-500 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 cursor-pointer">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-1 inline-block" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M18 13V5a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2h3l3 3 3-3h3a2 2 0 002-2zM5 7a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1zm1 3a1 1 0 100 2h3a1 1 0 100-2H6z" clip-rule="evenodd" />
                                 </svg>
@@ -251,25 +495,6 @@
                         </div>
                     </div>
 
-                    <!-- Contingut del mode micròfon - inicialment visible -->
-                    <!-- <div id="contingut-microfon">
-                        <div class="text-center mb-6">
-                            <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                                Quan facis clic, el navegador et demanarà permís per accedir al micròfon
-                            </p>
-                            <button id="boto-gravacio" 
-                                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full 
-                                            transition-colors duration-200 relative">
-                                <span id="estat-gravacio">Començar gravació</span>
-                                <span id="indicador-gravacio" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
-                            </button>
-                            <div id="temporitzador-gravacio" class="hidden text-sm text-gray-600 dark:text-gray-400 mt-1">
-                                Temps: <span id="temps-gravacio">00:00</span>
-                            </div>
-                        </div>
-
-
-                    </div> -->
                     <!-- Modificació: Contenidor amb botó de gravació i cancel·lació -->
                     <div id="contingut-microfon">
                         <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
@@ -278,14 +503,14 @@
                         <div class="flex justify-center space-x-3">
                             <button id="boto-gravacio" 
                                     class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full 
-                                            transition-colors duration-200 relative mb-1">
+                                            transition-colors duration-200 relative mb-1 cursor-pointer">
                                 <span id="estat-gravacio">Començar gravació</span>
                                 <span id="indicador-gravacio" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
                             </button>
                             <!-- Botó de cancel·lació - inicialment ocult -->
                             <button id="boto-cancelar" 
                                     class="hidden bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full 
-                                            transition-colors duration-200 mb-1">
+                                            transition-colors duration-200 mb-1 cursor-pointer">
                                 Cancel·lar
                             </button>
                         </div>
@@ -306,7 +531,7 @@
                                     rows="4"></textarea>
                             <button id="boto-traduir-text" 
                                     class="mt-3 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded
-                                        transition-colors duration-200">
+                                        transition-colors duration-200  cursor-pointer">
                                 Traduir i generar àudio
                             </button>
                         </div>
@@ -324,7 +549,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <h3 class="text-lg font-semibold mb-0 text-gray-800 dark:text-white">Àudio original</h3>
-                                <button id="descarregar-audio-original" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center">
+                                <button id="descarregar-audio-original" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center  cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                     </svg>
@@ -334,7 +559,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold mb-0 text-gray-800 dark:text-white">Àudio traduït</h3>
-                                <button id="descarregar-audio-traduit" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center">
+                                <button id="descarregar-audio-traduit" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center  cursor-pointer">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                     </svg>
@@ -532,7 +757,6 @@
             
             enviarAudio(blob) {
                 // Aquest mètode serà cridat des de l'aplicació principal
-                // this.onAudioEnregistrat?.(blob);
                 // Si hi ha chunks d'àudio, cridem el callback
                 if (!this.cancelar){
                     if (this.chunksAudio.length > 0 && blob.size > 0) {
@@ -557,6 +781,9 @@
                 this.apiKey = localStorage.getItem('openai-api-key') || '';
                 this.veuOriginal = localStorage.getItem('veu-original') || 'alloy';
                 this.veuTraduida = localStorage.getItem('veu-traduida') || 'nova';
+                this.idiomaOriginal = localStorage.getItem('idioma-original') || 'ca';  // català
+                this.idiomaTraduccio = localStorage.getItem('idioma-traduccio') || 'en'; // anglès
+
             }
 
             isConfigured() {
@@ -588,6 +815,61 @@
 
             getVeuTraduida() {
                 return this.veuTraduida;
+            }
+
+            ///
+
+            setIdiomaOriginal(idioma) {
+                this.idiomaOriginal = idioma;
+                localStorage.setItem('idioma-original', idioma);
+            }
+
+            getIdiomaOriginal() {
+                return this.idiomaOriginal;
+            }
+
+            setIdiomaTraduccio(idioma) {
+                this.idiomaTraduccio = idioma;
+                localStorage.setItem('idioma-traduccio', idioma);
+            }
+
+            getIdiomaTraduccio() {
+                return this.idiomaTraduccio;
+            }
+            ///
+
+            getUsApiKeyFacturacio() {
+                // no es pot consultar des del navegador, cal fer-ho des del servidor
+                return
+
+                // const apiKey = this.getApiKey();
+                // if (!apiKey) {
+                //     console.error('Clau API no configurada. No es pot consultar l\'ús.');
+                //     return;
+                // }
+                // //fetch(`https://api.openai.com/v1/dashboard/billing/usage?start_date=${start}&end_date=${end}`, {
+                // fetch('https://api.openai.com/v1/dashboard/billing/credit_grants', {
+                //     method: 'GET',
+                //     headers: {
+                //         'Authorization': `Bearer ${apiKey}`,
+                //         'Content-Type': 'application/json'
+                //     }
+                //     })
+                //     .then(res => res.json())
+                //     .then(data => {
+                //         console.log('Crèdit disponible:', data);
+                //     const total = data.total_granted;
+                //     const usat = data.total_used;
+                //     const disponible = data.total_available;
+
+                //     const convert = usd => usd * 0.93; // tipus de canvi aproximat USD → EUR
+
+                //     console.log(`Crèdit total: $${total.toFixed(2)} (~€${convert(total).toFixed(2)})`);
+                //     console.log(`Has gastat: $${usat.toFixed(2)} (~€${convert(usat).toFixed(2)})`);
+                //     console.log(`Et queda: $${disponible.toFixed(2)} (~€${convert(disponible).toFixed(2)})`);
+                //     })
+                //     .catch(err => console.error('Error consultant el crèdit:', err));
+
             }
 
             async transcriureAudio(audioBlob) {
@@ -763,6 +1045,7 @@
                 this.gestorAudio = new GestorAudio();
                 this.gestorOpenAI = new GestorOpenAI();
                 
+                
                 // Variables per emmagatzemar la transcripció i traducció
                 this.ultimaTranscripcio = '';
                 this.ultimaTraduccio = '';
@@ -786,6 +1069,7 @@
                 this.gestorAudio.setOnAudioEnregistrat((blob) => {
                     this.processarAudio(blob);
                 });
+
                 // Configurar el canvi de mode (afegit nou)
                 // this.configurarModes();
                 // Configurar el canvi de mode (si has afegit aquesta funcionalitat)
@@ -817,6 +1101,7 @@
                 const configuraApi = document.getElementById('configura-api');
                 
                 botoConfig.addEventListener('click', () => {
+                    this.gestorOpenAI.getUsApiKeyFacturacio()
                     this.mostrarModalConfiguracio();
                 });
                 
@@ -838,6 +1123,9 @@
                 const mostrarApiKey = document.getElementById('mostrar-api-key');
                 const veuOriginalSelect = document.getElementById('veu-original');
                 const veuTraduida = document.getElementById('veu-traduida');
+
+                const idiomaOriginalDef = document.getElementById('idioma-original');
+                const idiomaTraduccioDef = document.getElementById('idioma-traduccio');
                 
                 // Carregar la clau API si existeix
                 apiKeyInput.value = this.gestorOpenAI.getApiKey();
@@ -845,12 +1133,15 @@
                 // Carregar les veus configurades
                 veuOriginalSelect.value = this.gestorOpenAI.getVeuOriginal();
                 veuTraduida.value = this.gestorOpenAI.getVeuTraduida();
+
                 
                 formApi.addEventListener('submit', (e) => {
                     e.preventDefault();
                     this.gestorOpenAI.setApiKey(apiKeyInput.value);
                     this.gestorOpenAI.setVeuOriginal(veuOriginalSelect.value);
                     this.gestorOpenAI.setVeuTraduida(veuTraduida.value);
+                    this.gestorOpenAI.setIdiomaOriginal(idiomaOriginalDef.value);
+                    this.gestorOpenAI.setIdiomaTraduccio(idiomaTraduccioDef.value);
                     modalConfig.classList.add('hidden');
                     this.comprovarConfiguracio();
                 });
@@ -867,7 +1158,10 @@
             mostrarModalConfiguracio() {
                 const modalConfig = document.getElementById('modal-configuracio');
                 modalConfig.classList.remove('hidden');
+
             }
+
+
             
             async processarAudio(blob) {
 
@@ -1006,7 +1300,7 @@
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Àudio original:</span>
-                                <button class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm flex items-center descarregar-historial" 
+                                <button class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm flex items-center descarregar-historial  cursor-pointer" 
                                         data-url="${audioUrlOriginal}" 
                                         data-nom="${nomArxiuOriginal}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1023,7 +1317,7 @@
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Àudio traduït:</span>
-                                <button class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm flex items-center descarregar-historial" 
+                                <button class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 text-sm flex items-center descarregar-historial  cursor-pointer" 
                                         data-url="${audioUrlTraduit}" 
                                         data-nom="${nomArxiuTraduit}">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1283,6 +1577,41 @@
 
         // Iniciar l'aplicació
         document.addEventListener('DOMContentLoaded', () => {
+ 
+            const themeToggle = document.getElementById('tema-toggle');
+            const themeIcon = document.getElementById('tema-icon');
+
+            const idiomaOrigen = document.getElementById('idioma-original');
+            const idiomaDesti = document.getElementById('idioma-desti');
+
+            idiomaOrigen.value = localStorage.getItem('idioma-original') || 'ca';  // català
+            idiomaDesti.value  = localStorage.getItem('idioma-traduccio') || 'en'; // anglès
+        
+            // Aplicar tema inicial
+            const savedTheme = localStorage.getItem('tema') || 'clar';
+                        
+            if (savedTheme === 'fosc') {
+                document.documentElement.classList.add('dark');
+                themeIcon.textContent = '☀️';
+            }
+            
+            // Configurar el toggle
+            themeToggle.addEventListener('click', () => {
+                const isDark = document.documentElement.classList.contains('dark');
+                
+                if (isDark) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('tema', 'clar');
+                    themeIcon.textContent = '🌙';
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('tema', 'fosc');
+                    themeIcon.textContent = '☀️';
+                }
+            });
+
+
+
             window.app = new AplicacioTraductor();
         });
     </script>

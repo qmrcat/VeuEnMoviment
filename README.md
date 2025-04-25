@@ -27,9 +27,11 @@ Pots provar l'aplicació a: [Veu en moviment](https://qmrcat.github.io/VeuEnMovi
 
 ## 📷 Captures de pantalla
 
-![Captura de pantalla 1](./imatges/screenshot-a.png) *(Exemple - Substitueix amb captures reals)*
+![Captura de pantalla 1](./imatges/screenshot-a.png) 
+Gravació d'àudio
 
-![Captura de pantalla 2](./imatges/screenshot-b.png) *(Exemple - Substitueix amb captures reals)*
+![Captura de pantalla 2](./imatges/screenshot-b.png) 
+Generar àudio des d'un text
 
 ## 🔧 Tecnologies utilitzades
 
