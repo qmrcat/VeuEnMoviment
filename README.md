@@ -23,7 +23,7 @@ L'aplicació funciona completament al navegador, sense necessitat d'instal·lar-
 
 ## 🚀 Demo
 
-Pots provar l'aplicació a: [Veuenmoviment](https://qmrcat.github.io/VeuEnMoviment/)
+Pots provar l'aplicació a: [Veu en moviment](https://qmrcat.github.io/VeuEnMoviment/)
 
 ## 📷 Captures de pantalla
 
@@ -48,7 +48,7 @@ Pots provar l'aplicació a: [Veuenmoviment](https://qmrcat.github.io/VeuEnMovime
 
 ### Per a usuaris
 
-1. Visita [URL de l'aplicació] (Afegeix la URL quan estigui disponible)
+1. Visita ([Ve en moviment](https://qmrcat.github.io/VeuEnMoviment/))
 2. Configura la teva clau API d'OpenAI fent clic al botó ⚙️
 3. Selecciona l'idioma original i l'idioma de traducció
 4. Utilitza el micròfon per gravar la teva veu o escriu directament el text
@@ -75,7 +75,8 @@ Pots provar l'aplicació a: [Veuenmoviment](https://qmrcat.github.io/VeuEnMovime
 
 ## 🔑 Configuració d'API
 
-L'aplicació requereix una clau API d'OpenAI per funcionar. Pots obtenir-ne una a [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys).
+L'aplicació requereix una clau API d'OpenAI per funcionar. 
+Pots obtenir-ne una a [https://platform.openai.com/account/api-keys](https://platform.openai.com/account/api-keys).
 
 ⚠️ **Important**: La teva clau API es guarda només localment al teu navegador i mai s'envia al nostre servidor.
 

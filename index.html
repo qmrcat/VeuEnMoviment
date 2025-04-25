@@ -252,7 +252,7 @@
                     </div>
 
                     <!-- Contingut del mode micròfon - inicialment visible -->
-                    <div id="contingut-microfon">
+                    <!-- <div id="contingut-microfon">
                         <div class="text-center mb-6">
                             <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
                                 Quan facis clic, el navegador et demanarà permís per accedir al micròfon
@@ -269,7 +269,32 @@
                         </div>
 
 
+                    </div> -->
+                    <!-- Modificació: Contenidor amb botó de gravació i cancel·lació -->
+                    <div id="contingut-microfon">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                            Quan facis clic, el navegador et demanarà permís per accedir al micròfon
+                        </p>
+                        <div class="flex justify-center space-x-3">
+                            <button id="boto-gravacio" 
+                                    class="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-full 
+                                            transition-colors duration-200 relative mb-1">
+                                <span id="estat-gravacio">Començar gravació</span>
+                                <span id="indicador-gravacio" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-red-600 rounded-full animate-pulse"></span>
+                            </button>
+                            <!-- Botó de cancel·lació - inicialment ocult -->
+                            <button id="boto-cancelar" 
+                                    class="hidden bg-gray-500 hover:bg-gray-600 text-white font-bold py-3 px-6 rounded-full 
+                                            transition-colors duration-200 mb-1">
+                                Cancel·lar
+                            </button>
+                        </div>
+                        <!-- Temporitzador de gravació -->
+                        <div id="temporitzador-gravacio" class="hidden text-sm text-gray-600 dark:text-gray-400 mt-1">
+                            Temps: <span id="temps-gravacio">00:00</span>
+                        </div>
                     </div>
+
                     <!-- Contingut del mode text - inicialment ocult -->
                     <div id="contingut-text" class="hidden">
                         <div class="max-w-lg mx-auto">
@@ -295,10 +320,10 @@
                         </div>
                     </div>
 
-                    <div id="reproductor-audio" class="hidden mb-6">
+                    <div id="reproductor-audio" class="hidden mb-6 mt-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Àudio original</h3>
+                                <h3 class="text-lg font-semibold mb-0 text-gray-800 dark:text-white">Àudio original</h3>
                                 <button id="descarregar-audio-original" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -308,7 +333,7 @@
                                 <audio id="audio-original" controls class="w-full"></audio>
                             </div>
                             <div>
-                                <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-white">Àudio traduït</h3>
+                                <h3 class="text-lg font-semibold mb-0 text-gray-800 dark:text-white">Àudio traduït</h3>
                                 <button id="descarregar-audio-traduit" class="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -348,9 +373,11 @@
         class GestorAudio {
             constructor() {
                 this.gravant = false;
+                this.cancelar = false;
                 this.botoGravacio = document.getElementById('boto-gravacio');
                 this.estatGravacio = document.getElementById('estat-gravacio');
                 this.indicadorGravacio = document.getElementById('indicador-gravacio');
+                this.botoCancelar = document.getElementById('boto-cancelar'); // Nou
                 this.mediaRecorder = null;
                 this.chunksAudio = [];
 
@@ -362,6 +389,7 @@
                             
                 this.comprovarSuportMicrofon();
                 this.botoGravacio.addEventListener('click', () => this.alternarGravacio());
+                this.botoCancelar.addEventListener('click', () => this.cancelarGravacio()); // Nou
             }
             
             comprovarSuportMicrofon() {
@@ -406,49 +434,29 @@
                     this.aturarGravacio();
                 }
             }
-            
-            // async iniciarGravacio() {
-            //     try {
-            //         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            //         this.mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
-            //         this.chunksAudio = [];
-                    
-            //         this.mediaRecorder.ondataavailable = (event) => {
-            //             if (event.data.size > 0) {
-            //                 this.chunksAudio.push(event.data);
-            //             }
-            //         };
-                    
-            //         this.mediaRecorder.onstop = () => {
-            //             const blob = new Blob(this.chunksAudio, { type: 'audio/webm' });
-            //             console.log('Blob d\'àudio creat, mida:', blob.size, 'tipus:', blob.type);
-            //             this.enviarAudio(blob);
-            //             stream.getTracks().forEach(track => track.stop());
-            //         };
-                    
-            //         this.mediaRecorder.start();
-            //         this.gravant = true;
-            //         this.actualitzarUI(true);
-            //     } catch (error) {
-            //         console.error('Error en accedir al micròfon:', error);
-                    
-            //         let missatgeError = 'No s\'ha pogut accedir al micròfon.';
-                    
-            //         if (error.name === 'NotAllowedError') {
-            //             missatgeError += '\n\nHas denegat el permís al micròfon. Per activar-lo:\n' +
-            //                             '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
-            //                             '2. Canvia el permís del micròfon a "Permet"\n' +
-            //                             '3. Recarrega la pàgina';
-            //         } else if (error.name === 'NotFoundError') {
-            //             missatgeError += '\n\nNo s\'ha trobat cap micròfon. Assegura\'t que en tens un connectat.';
-            //         } else if (error.name === 'NotReadableError') {
-            //             missatgeError += '\n\nEl micròfon està sent utilitzat per una altra aplicació.';
-            //         }
-                    
-            //         alert(missatgeError);
-            //     }
-            // }
 
+            cancelarGravacio() {
+                if (this.mediaRecorder && this.gravant) {
+                    // Aturar el mediaRecorder sense processar l'àudio
+                    this.mediaRecorder.stop();
+                    
+                    // Netejar els chunks d'àudio perquè no es processin
+                    this.chunksAudio = [];
+                    
+                    // Actualitzar l'estat i la UI
+                    this.gravant = false;
+                    this.cancelar = true; // Afegit per indicar que la gravació ha estat cancel·lada
+                    this.actualitzarUI(false);
+                    
+                    // Aturar el temporitzador (si l'has implementat)
+                    if (typeof this.aturarTemporitzador === 'function') {
+                        this.aturarTemporitzador();
+                    }
+                    
+                    console.log('Gravació cancel·lada per l\'usuari');
+                }
+            }
+            
             async iniciarGravacio() {
                 try {
                     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -470,6 +478,7 @@
                     
                     this.mediaRecorder.start();
                     this.gravant = true;
+                    this.cancelar = false;
                     this.actualitzarUI(true);
                     
                     // Iniciar el temporitzador (afegit nou)
@@ -511,17 +520,30 @@
                     this.botoGravacio.classList.remove('bg-red-500', 'hover:bg-red-600');
                     this.botoGravacio.classList.add('bg-blue-500', 'hover:bg-blue-600');
                     this.indicadorGravacio.classList.remove('hidden');
+                    this.botoCancelar.classList.remove('hidden'); // Mostrem el botó de cancel·lació
                 } else {
                     this.estatGravacio.textContent = 'Començar gravació';
                     this.botoGravacio.classList.remove('bg-blue-500', 'hover:bg-blue-600');
                     this.botoGravacio.classList.add('bg-red-500', 'hover:bg-red-600');
                     this.indicadorGravacio.classList.add('hidden');
+                    this.botoCancelar.classList.add('hidden'); // Ocultem el botó de cancel·lació
                 }
             }
             
             enviarAudio(blob) {
                 // Aquest mètode serà cridat des de l'aplicació principal
-                this.onAudioEnregistrat?.(blob);
+                // this.onAudioEnregistrat?.(blob);
+                // Si hi ha chunks d'àudio, cridem el callback
+                if (!this.cancelar){
+                    if (this.chunksAudio.length > 0 && blob.size > 0) {
+                        this.onAudioEnregistrat?.(blob);
+                    } else {
+                        console.log('Gravació buida, no s\'envia');
+                    }
+                } else {
+                    console.log('Gravació cancel·lada o buida, no s\'envia');
+                }
+                this.cancelar = false; // Reiniciem la variable de cancel·lació
             }
             
             setOnAudioEnregistrat(callback) {
