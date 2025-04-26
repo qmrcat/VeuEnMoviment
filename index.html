@@ -74,103 +74,119 @@
             </div>
         </header>
 
-        <!-- Formulari de configuració de l'API -->
-        <div id="modal-configuracio" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-            <div class="fixed inset-0 bg-black bg-opacity-50" id="tanca-modal"></div>
-            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl w-full max-w-md z-10">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Configuració API</h2>
-                    <button id="tanca-configuracio" class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer">
-                        ✕
-                    </button>
-                </div>
-                <form id="form-api" class="space-y-4">
-                    <div>
-                        <label for="api-key" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Clau API d'OpenAI
-                        </label>
-                        <input type="password" id="api-key" name="api-key" 
-                                class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
-                                    bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <div class="flex items-center mt-2">
-                            <input type="checkbox" id="mostrar-api-key" class="mr-2">
-                            <label for="mostrar-api-key" class="text-sm text-gray-600 dark:text-gray-400">
-                                Mostrar clau
-                            </label>
-                        </div>
-                        <div class="text-sm text-gray-500 dark:text-gray-400 mt-3">
-                            <p>La clau API es desarà localment al teu navegador i mai s'enviarà al nostre servidor.</p>
-                            <p class="mt-1">Si no tens una clau API d'OpenAI, pots obtenir-ne una a <a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-500 hover:underline">platform.openai.com</a> requereix un pagament</p>
-                            <p class="mt-1">Si vols consulta el consum o saber el crèdit que et queda ves a <a href="https://platform.openai.com/usage" target="_blank" class="text-blue-500 hover:underline">platform.openai.com/usage</a></p>
-                        </div>                        
-                    </div>
-                    <!-- Secció de configuració de veus -->
-                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
-                        <h3 class="text-md font-semibold text-gray-800 dark:text-white mb-3">Configuració de veus</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Veu per idioma original -->
-                            <div>
-                                <label for="veu-original" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Veu per àudio original
-                                </label>
-                                <select id="veu-original" 
-                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
-                                                bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                                focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                                    <optgroup label="Veus masculines">
-                                        <option value="alloy">Alloy</option>
-                                        <option value="echo">Echo</option>
-                                        <option value="fable">Fable</option>
-                                        <option value="onyx">Onyx</option>
-                                        <option value="ash">Ash</option>
-                                        <option value="balland">Balland</option>
-                                        <option value="verse">Verse</option>
-                                    </optgroup>
-                                    <optgroup label="Veus femenines">
-                                        <option value="nova">Nova</option>
-                                        <option value="shimmer">Shimmer</option>
-                                        <option value="coral">Coral</option>
-                                        <option value="sage">Sage</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                            
-                            <!-- Veu per idioma traduït -->
-                            <div>
-                                <label for="veu-traduida" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Veu per àudio traduït
-                                </label>
-                                <select id="veu-traduida" 
-                                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
-                                                bg-white dark:bg-gray-700 text-gray-900 dark:text-white
-                                                focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" >
-                                    <optgroup label="Veus masculines">
-                                        <option value="alloy">Alloy</option>
-                                        <option value="echo">Echo</option>
-                                        <option value="fable">Fable</option>
-                                        <option value="onyx">Onyx</option>
-                                        <option value="ash">Ash</option>
-                                        <option value="balland">Balland</option>
-                                        <option value="verse">Verse</option>
-                                    </optgroup>
-                                    <optgroup label="Veus femenines">
-                                        <option value="nova">Nova</option>
-                                        <option value="shimmer">Shimmer</option>
-                                        <option value="coral">Coral</option>
-                                        <option value="sage">Sage</option>
-                                    </optgroup>
-                                </select>
-                            </div>
-                        </div>
-                    </div>                    
 
-                    <!-- Secció de configuració d'idiomes -->
-                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+        
+
+<!-- Formulari de configuració de l'API -->
+<div id="modal-configuracio" class="fixed inset-0 z-50 hidden flex items-center justify-center">
+    <!-- fons semitransparent -->
+    <div id="tanca-modal" class="absolute inset-0 bg-black bg-opacity-50"></div>
+  
+    <!-- contenidor principal -->
+    <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md z-10 flex flex-col max-h-[85vh]">
+      
+      <!-- capçalera fixa -->
+      <header class="flex-none p-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Configuració API</h2>
+          <button id="tanca-configuracio" type="button"
+                  class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 
+                         cursor-pointer p-2 text-2xl rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+            ✕
+          </button>
+        </div>
+      </header>
+        
+        <!-- CONTINGUT AMB SCROLL - amb alçada limitada -->
+        <div class="overflow-y-auto flex-grow px-4 py-2">
+            <form id="form-api" class="space-y-4">
+                <div>
+                    <label for="api-key" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Clau API d'OpenAI
+                    </label>
+                    <input type="password" id="api-key" name="api-key" 
+                            class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                                bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <div class="flex items-center mt-2">
+                        <input type="checkbox" id="mostrar-api-key" class="mr-2">
+                        <label for="mostrar-api-key" class="text-sm text-gray-600 dark:text-gray-400">
+                            Mostrar clau
+                        </label>
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400 mt-3">
+                        <p>La clau API es desarà localment al teu navegador i mai s'enviarà al nostre servidor.</p>
+                        <p class="mt-1">Si no tens una clau API d'OpenAI, pots obtenir-ne una a <a href="https://platform.openai.com/account/api-keys" target="_blank" class="text-blue-500 hover:underline">platform.openai.com</a> requereix un pagament</p>
+                        <p class="mt-1">Si vols consulta el consum o saber el crèdit que et queda ves a <a href="https://platform.openai.com/usage" target="_blank" class="text-blue-500 hover:underline">platform.openai.com/usage</a></p>
+                    </div>                        
+                </div>
+                
+                <!-- Secció de configuració de veus -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                    <h3 class="text-md font-semibold text-gray-800 dark:text-white mb-3">Configuració de veus</h3>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <!-- Veu per idioma original -->
+                        <div>
+                            <label for="veu-original" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Veu per àudio original
+                            </label>
+                            <select id="veu-original" 
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                            focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                                <optgroup label="Veus masculines">
+                                    <option value="alloy">Alloy</option>
+                                    <option value="echo">Echo</option>
+                                    <option value="fable">Fable</option>
+                                    <option value="onyx">Onyx</option>
+                                    <option value="ash">Ash</option>
+                                    <option value="balland">Balland</option>
+                                    <option value="verse">Verse</option>
+                                </optgroup>
+                                <optgroup label="Veus femenines">
+                                    <option value="nova">Nova</option>
+                                    <option value="shimmer">Shimmer</option>
+                                    <option value="coral">Coral</option>
+                                    <option value="sage">Sage</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                        
+                        <!-- Veu per idioma traduït -->
+                        <div>
+                            <label for="veu-traduida" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                                Veu per àudio traduït
+                            </label>
+                            <select id="veu-traduida" 
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
+                                            bg-white dark:bg-gray-700 text-gray-900 dark:text-white
+                                            focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" >
+                                <optgroup label="Veus masculines">
+                                    <option value="alloy">Alloy</option>
+                                    <option value="echo">Echo</option>
+                                    <option value="fable">Fable</option>
+                                    <option value="onyx">Onyx</option>
+                                    <option value="ash">Ash</option>
+                                    <option value="balland">Balland</option>
+                                    <option value="verse">Verse</option>
+                                </optgroup>
+                                <optgroup label="Veus femenines">
+                                    <option value="nova">Nova</option>
+                                    <option value="shimmer">Shimmer</option>
+                                    <option value="coral">Coral</option>
+                                    <option value="sage">Sage</option>
+                                </optgroup>
+                            </select>
+                        </div>
+                    </div>
+                </div>                    
+
+                <!-- Secció de configuració d'idiomes -->
+                <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
                     <h3 class="text-md font-semibold text-gray-800 dark:text-white mb-3">Configuració d'idiomes</h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-4">
                         <!-- idioma original -->
                         <div>
                             <label for="idioma-original" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -180,63 +196,63 @@
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
                                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
                                             focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                                <option value="ca">Català</option>
-                                <option value="en">Anglès</option>
-                                <option value="af">Afrikaans</option>
-                                <option value="de">Alemany</option>
-                                <option value="en">Anglès</option>
-                                <option value="ar">Àrab</option>
-                                <option value="hy">Armeni</option>
-                                <option value="az">Azerbaidjanès</option>
-                                <option value="be">Bielorús</option>
-                                <option value="bs">Bosnià</option>
-                                <option value="bg">Búlgar</option>
-                                <option value="cs">Txec</option>
-                                <option value="hr">Croat</option>
-                                <option value="da">Danès</option>
-                                <option value="es">Castellà</option>
-                                <option value="et">Estonià</option>
-                                <option value="fi">Finès</option>
-                                <option value="fr">Francès</option>
-                                <option value="cy">Gal·lès</option>
-                                <option value="gl">Gallec</option>
-                                <option value="el">Grec</option>
-                                <option value="he">Hebreu</option>
-                                <option value="hi">Hindi</option>
-                                <option value="hu">Hongarès</option>
-                                <option value="is">Islandès</option>
-                                <option value="id">Indonesi</option>
-                                <option value="it">Italià</option>
-                                <option value="ja">Japonès</option>
-                                <option value="kk">Kazakh</option>
-                                <option value="kn">Kannada</option>
-                                <option value="ko">Coreà</option>
-                                <option value="lv">Letó</option>
-                                <option value="lt">Lituà</option>
-                                <option value="mk">Macedoni</option>
-                                <option value="ms">Malai</option>
-                                <option value="mi">Maori</option>
-                                <option value="mr">Marathi</option>
-                                <option value="ne">Nepalès</option>
-                                <option value="no">Noruec</option>
-                                <option value="fa">Persa</option>
-                                <option value="pl">Polonès</option>
-                                <option value="pt">Portuguès</option>
-                                <option value="ro">Romanès</option>
-                                <option value="ru">Rus</option>
-                                <option value="sk">Eslovac</option>
-                                <option value="sl">Eslovè</option>
-                                <option value="sr">Serbi</option>
-                                <option value="sw">Suahili</option>
-                                <option value="sv">Suec</option>
-                                <option value="tl">Tagal</option>
-                                <option value="ta">Tàmil</option>
-                                <option value="th">Tai</option>
-                                <option value="tr">Turc</option>
-                                <option value="uk">Ucraïnès</option>
-                                <option value="ur">Urdú</option>
-                                <option value="vi">Vietnamita</option>
-                                <option value="zh">Xinès</option>  
+                                            <option value="ca">Català</option>
+                                            <option value="en">Anglès</option>
+                                            <option value="af">Afrikaans</option>
+                                            <option value="de">Alemany</option>
+                                            <option value="en">Anglès</option>
+                                            <option value="ar">Àrab</option>
+                                            <option value="hy">Armeni</option>
+                                            <option value="az">Azerbaidjanès</option>
+                                            <option value="be">Bielorús</option>
+                                            <option value="bs">Bosnià</option>
+                                            <option value="bg">Búlgar</option>
+                                            <option value="cs">Txec</option>
+                                            <option value="hr">Croat</option>
+                                            <option value="da">Danès</option>
+                                            <option value="es">Castellà</option>
+                                            <option value="et">Estonià</option>
+                                            <option value="fi">Finès</option>
+                                            <option value="fr">Francès</option>
+                                            <option value="cy">Gal·lès</option>
+                                            <option value="gl">Gallec</option>
+                                            <option value="el">Grec</option>
+                                            <option value="he">Hebreu</option>
+                                            <option value="hi">Hindi</option>
+                                            <option value="hu">Hongarès</option>
+                                            <option value="is">Islandès</option>
+                                            <option value="id">Indonesi</option>
+                                            <option value="it">Italià</option>
+                                            <option value="ja">Japonès</option>
+                                            <option value="kk">Kazakh</option>
+                                            <option value="kn">Kannada</option>
+                                            <option value="ko">Coreà</option>
+                                            <option value="lv">Letó</option>
+                                            <option value="lt">Lituà</option>
+                                            <option value="mk">Macedoni</option>
+                                            <option value="ms">Malai</option>
+                                            <option value="mi">Maori</option>
+                                            <option value="mr">Marathi</option>
+                                            <option value="ne">Nepalès</option>
+                                            <option value="no">Noruec</option>
+                                            <option value="fa">Persa</option>
+                                            <option value="pl">Polonès</option>
+                                            <option value="pt">Portuguès</option>
+                                            <option value="ro">Romanès</option>
+                                            <option value="ru">Rus</option>
+                                            <option value="sk">Eslovac</option>
+                                            <option value="sl">Eslovè</option>
+                                            <option value="sr">Serbi</option>
+                                            <option value="sw">Suahili</option>
+                                            <option value="sv">Suec</option>
+                                            <option value="tl">Tagal</option>
+                                            <option value="ta">Tàmil</option>
+                                            <option value="th">Tai</option>
+                                            <option value="tr">Turc</option>
+                                            <option value="uk">Ucraïnès</option>
+                                            <option value="ur">Urdú</option>
+                                            <option value="vi">Vietnamita</option>
+                                            <option value="zh">Xinès</option>  
                             </select>
                         </div>
                         
@@ -249,76 +265,83 @@
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
                                             bg-white dark:bg-gray-700 text-gray-900 dark:text-white
                                             focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer" >
-                                <option value="ca">Català</option>
-                                <option value="af">Afrikaans</option>
-                                <option value="de">Alemany</option>
-                                <option value="en">Anglès</option>
-                                <option value="ar">Àrab</option>
-                                <option value="hy">Armeni</option>
-                                <option value="az">Azerbaidjanès</option>
-                                <option value="be">Bielorús</option>
-                                <option value="bs">Bosnià</option>
-                                <option value="bg">Búlgar</option>
-                                <option value="cs">Txec</option>
-                                <option value="hr">Croat</option>
-                                <option value="da">Danès</option>
-                                <option value="es">Castellà</option>
-                                <option value="et">Estonià</option>
-                                <option value="fi">Finès</option>
-                                <option value="fr">Francès</option>
-                                <option value="cy">Gal·lès</option>
-                                <option value="gl">Gallec</option>
-                                <option value="el">Grec</option>
-                                <option value="he">Hebreu</option>
-                                <option value="hi">Hindi</option>
-                                <option value="hu">Hongarès</option>
-                                <option value="is">Islandès</option>
-                                <option value="id">Indonesi</option>
-                                <option value="it">Italià</option>
-                                <option value="ja">Japonès</option>
-                                <option value="kk">Kazakh</option>
-                                <option value="kn">Kannada</option>
-                                <option value="ko">Coreà</option>
-                                <option value="lv">Letó</option>
-                                <option value="lt">Lituà</option>
-                                <option value="mk">Macedoni</option>
-                                <option value="ms">Malai</option>
-                                <option value="mi">Maori</option>
-                                <option value="mr">Marathi</option>
-                                <option value="ne">Nepalès</option>
-                                <option value="no">Noruec</option>
-                                <option value="fa">Persa</option>
-                                <option value="pl">Polonès</option>
-                                <option value="pt">Portuguès</option>
-                                <option value="ro">Romanès</option>
-                                <option value="ru">Rus</option>
-                                <option value="sk">Eslovac</option>
-                                <option value="sl">Eslovè</option>
-                                <option value="sr">Serbi</option>
-                                <option value="sw">Suahili</option>
-                                <option value="sv">Suec</option>
-                                <option value="tl">Tagal</option>
-                                <option value="ta">Tàmil</option>
-                                <option value="th">Tai</option>
-                                <option value="tr">Turc</option>
-                                <option value="uk">Ucraïnès</option>
-                                <option value="ur">Urdú</option>
-                                <option value="vi">Vietnamita</option>
-                                <option value="zh">Xinès</option>  
+                                            <option value="ca">Català</option>
+                                            <option value="en">Anglès</option>
+                                            <option value="af">Afrikaans</option>
+                                            <option value="de">Alemany</option>
+                                            <option value="en">Anglès</option>
+                                            <option value="ar">Àrab</option>
+                                            <option value="hy">Armeni</option>
+                                            <option value="az">Azerbaidjanès</option>
+                                            <option value="be">Bielorús</option>
+                                            <option value="bs">Bosnià</option>
+                                            <option value="bg">Búlgar</option>
+                                            <option value="cs">Txec</option>
+                                            <option value="hr">Croat</option>
+                                            <option value="da">Danès</option>
+                                            <option value="es">Castellà</option>
+                                            <option value="et">Estonià</option>
+                                            <option value="fi">Finès</option>
+                                            <option value="fr">Francès</option>
+                                            <option value="cy">Gal·lès</option>
+                                            <option value="gl">Gallec</option>
+                                            <option value="el">Grec</option>
+                                            <option value="he">Hebreu</option>
+                                            <option value="hi">Hindi</option>
+                                            <option value="hu">Hongarès</option>
+                                            <option value="is">Islandès</option>
+                                            <option value="id">Indonesi</option>
+                                            <option value="it">Italià</option>
+                                            <option value="ja">Japonès</option>
+                                            <option value="kk">Kazakh</option>
+                                            <option value="kn">Kannada</option>
+                                            <option value="ko">Coreà</option>
+                                            <option value="lv">Letó</option>
+                                            <option value="lt">Lituà</option>
+                                            <option value="mk">Macedoni</option>
+                                            <option value="ms">Malai</option>
+                                            <option value="mi">Maori</option>
+                                            <option value="mr">Marathi</option>
+                                            <option value="ne">Nepalès</option>
+                                            <option value="no">Noruec</option>
+                                            <option value="fa">Persa</option>
+                                            <option value="pl">Polonès</option>
+                                            <option value="pt">Portuguès</option>
+                                            <option value="ro">Romanès</option>
+                                            <option value="ru">Rus</option>
+                                            <option value="sk">Eslovac</option>
+                                            <option value="sl">Eslovè</option>
+                                            <option value="sr">Serbi</option>
+                                            <option value="sw">Suahili</option>
+                                            <option value="sv">Suec</option>
+                                            <option value="tl">Tagal</option>
+                                            <option value="ta">Tàmil</option>
+                                            <option value="th">Tai</option>
+                                            <option value="tr">Turc</option>
+                                            <option value="uk">Ucraïnès</option>
+                                            <option value="ur">Urdú</option>
+                                            <option value="vi">Vietnamita</option>
+                                            <option value="zh">Xinès</option>  
                             </select>
                         </div>
                     </div>
-                </div>                    
+                </div>
                 
-
-                    <button type="submit" 
-                            class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500  cursor-pointer">
-                        Desar configuració
-                    </button>
-                </form>
-            </div>
+                <!-- Espai extra al final del scroll -->
+                <div class="h-4"></div>
+            </form>
         </div>
+        
+        <!-- PEU FIX AMB BOTÓ DE DESAR -->
+        <footer class="flex-none p-4 border-t border-gray-200 dark:border-gray-700">
+            <button type="submit" form="form-api"
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg
+                           focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-lg">
+              Desar configuració
+            </button>
+          </footer>
+    </div>
+</div>
 
         <!-- Avís API no configurada -->
         <div id="avis-api" class="hidden bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-400 p-4 mb-6">
