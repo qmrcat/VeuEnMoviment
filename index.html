@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- <html lang="ca" x-data="{ tema: localStorage.getItem('tema') || 'clar' }" :class="{ 'dark': tema === 'fosc' }"> -->
 <html lang="ca" >
 <head>
     <meta charset="UTF-8">
@@ -12,7 +11,6 @@
     <link rel="manifest" href="./site.webmanifest">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link href="./output.css" rel="stylesheet">
-    <!-- <script defer src="https://unpkg.com/alpinejs@3.12.0/dist/cdn.min.js"></script> -->
     <style>
         /* Assegurar que les transicions de temes són suaus */
         html.dark {
@@ -32,14 +30,6 @@
         }
 
     </style>
-    <!-- <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {}
-            }
-        }
-    </script> -->
 </head>
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <div id="app" class="container mx-auto px-4 py-8">
@@ -396,84 +386,89 @@
 
     <script type="module">
         const idiomesJSON = [
-                                { "angles": "Afrikaans", "catala": "Afrikaans", "codi": "af" },
-                                { "angles": "Arabic", "catala": "Àrab", "codi": "ar" },
-                                { "angles": "Armenian", "catala": "Armeni", "codi": "hy" },
-                                { "angles": "Azerbaijani", "catala": "Azerbaidjanès", "codi": "az" },
-                                { "angles": "Belarusian", "catala": "Bielorús", "codi": "be" },
-                                { "angles": "Bosnian", "catala": "Bosnià", "codi": "bs" },
-                                { "angles": "Bulgarian", "catala": "Búlgar", "codi": "bg" },
-                                { "angles": "Catalan", "catala": "Català", "codi": "ca" },
-                                { "angles": "Chinese", "catala": "Xinès", "codi": "zh" },
-                                { "angles": "Croatian", "catala": "Croat", "codi": "hr" },
-                                { "angles": "Czech", "catala": "Txec", "codi": "cs" },
-                                { "angles": "Danish", "catala": "Danès", "codi": "da" },
-                                { "angles": "Dutch", "catala": "Neerlandès", "codi": "nl" },
-                                { "angles": "English", "catala": "Anglès", "codi": "en" },
-                                { "angles": "Estonian", "catala": "Estonià", "codi": "et" },
-                                { "angles": "Finnish", "catala": "Finès", "codi": "fi" },
-                                { "angles": "French", "catala": "Francès", "codi": "fr" },
-                                { "angles": "Galician", "catala": "Gallec", "codi": "gl" },
-                                { "angles": "German", "catala": "Alemany", "codi": "de" },
-                                { "angles": "Greek", "catala": "Grec", "codi": "el" },
-                                { "angles": "Hebrew", "catala": "Hebreu", "codi": "he" },
-                                { "angles": "Hindi", "catala": "Hindi", "codi": "hi" },
-                                { "angles": "Hungarian", "catala": "Hongarès", "codi": "hu" },
-                                { "angles": "Icelandic", "catala": "Islandès", "codi": "is" },
-                                { "angles": "Indonesian", "catala": "Indonesi", "codi": "id" },
-                                { "angles": "Italian", "catala": "Italià", "codi": "it" },
-                                { "angles": "Japanese", "catala": "Japonès", "codi": "ja" },
-                                { "angles": "Kannada", "catala": "Kannada", "codi": "kn" },
-                                { "angles": "Kazakh", "catala": "Kazakh", "codi": "kk" },
-                                { "angles": "Korean", "catala": "Coreà", "codi": "ko" },
-                                { "angles": "Latvian", "catala": "Letó", "codi": "lv" },
-                                { "angles": "Lithuanian", "catala": "Lituà", "codi": "lt" },
-                                { "angles": "Macedonian", "catala": "Macedoni", "codi": "mk" },
-                                { "angles": "Malay", "catala": "Malai", "codi": "ms" },
-                                { "angles": "Marathi", "catala": "Marathi", "codi": "mr" },
-                                { "angles": "Maori", "catala": "Maori", "codi": "mi" },
-                                { "angles": "Nepali", "catala": "Nepalès", "codi": "ne" },
-                                { "angles": "Norwegian", "catala": "Noruec", "codi": "no" },
-                                { "angles": "Persian", "catala": "Persa", "codi": "fa" },
-                                { "angles": "Polish", "catala": "Polonès", "codi": "pl" },
-                                { "angles": "Portuguese", "catala": "Portuguès", "codi": "pt" },
-                                { "angles": "Romanian", "catala": "Romanès", "codi": "ro" },
-                                { "angles": "Russian", "catala": "Rus", "codi": "ru" },
-                                { "angles": "Serbian", "catala": "Serbi", "codi": "sr" },
-                                { "angles": "Slovak", "catala": "Eslovac", "codi": "sk" },
-                                { "angles": "Slovenian", "catala": "Eslovè", "codi": "sl" },
-                                { "angles": "Spanish", "catala": "Espanyol", "codi": "es" },
-                                { "angles": "Swahili", "catala": "Suahili", "codi": "sw" },
-                                { "angles": "Swedish", "catala": "Suec", "codi": "sv" },
-                                { "angles": "Tagalog", "catala": "Tagal", "codi": "tl" },
-                                { "angles": "Tamil", "catala": "Tàmil", "codi": "ta" },
-                                { "angles": "Thai", "catala": "Tai", "codi": "th" },
-                                { "angles": "Turkish", "catala": "Turc", "codi": "tr" },
-                                { "angles": "Ukrainian", "catala": "Ucraïnès", "codi": "uk" },
-                                { "angles": "Urdu", "catala": "Urdú", "codi": "ur" },
-                                { "angles": "Vietnamese", "catala": "Vietnamita", "codi": "vi" },
-                                { "angles": "Welsh", "catala": "Gal·lès", "codi": "cy" }
-                            ];
-        // Funció per ordenar el JSON per qualsevol columna
-        function ordenarPerColumna(jsonIdiomes, columna) {
-            // Fem una còpia del JSON per no modificar l'original
-            const idiordesnatsesCopia = [...jsonIdiomes];
-            
-            // Ordenem per la columna especificada
-            return idiordesnatsesCopia.sort((a, b) => {
-                return a[columna] - b[columna]; // Per si hi ha valors numèrics
+            { "angles": "Afrikaans", "catala": "Afrikaans", "codi": "af" },
+            { "angles": "Arabic", "catala": "Àrab", "codi": "ar" },
+            { "angles": "Armenian", "catala": "Armeni", "codi": "hy" },
+            { "angles": "Azerbaijani", "catala": "Azerbaidjanès", "codi": "az" },
+            { "angles": "Belarusian", "catala": "Bielorús", "codi": "be" },
+            { "angles": "Bosnian", "catala": "Bosnià", "codi": "bs" },
+            { "angles": "Bulgarian", "catala": "Búlgar", "codi": "bg" },
+            { "angles": "Catalan", "catala": "Català", "codi": "ca" },
+            { "angles": "Chinese", "catala": "Xinès", "codi": "zh" },
+            { "angles": "Croatian", "catala": "Croat", "codi": "hr" },
+            { "angles": "Czech", "catala": "Txec", "codi": "cs" },
+            { "angles": "Danish", "catala": "Danès", "codi": "da" },
+            { "angles": "Dutch", "catala": "Neerlandès", "codi": "nl" },
+            { "angles": "English", "catala": "Anglès", "codi": "en" },
+            { "angles": "Estonian", "catala": "Estonià", "codi": "et" },
+            { "angles": "Finnish", "catala": "Finès", "codi": "fi" },
+            { "angles": "French", "catala": "Francès", "codi": "fr" },
+            { "angles": "Galician", "catala": "Gallec", "codi": "gl" },
+            { "angles": "German", "catala": "Alemany", "codi": "de" },
+            { "angles": "Greek", "catala": "Grec", "codi": "el" },
+            { "angles": "Hebrew", "catala": "Hebreu", "codi": "he" },
+            { "angles": "Hindi", "catala": "Hindi", "codi": "hi" },
+            { "angles": "Hungarian", "catala": "Hongarès", "codi": "hu" },
+            { "angles": "Icelandic", "catala": "Islandès", "codi": "is" },
+            { "angles": "Indonesian", "catala": "Indonesi", "codi": "id" },
+            { "angles": "Italian", "catala": "Italià", "codi": "it" },
+            { "angles": "Japanese", "catala": "Japonès", "codi": "ja" },
+            { "angles": "Kannada", "catala": "Kannada", "codi": "kn" },
+            { "angles": "Kazakh", "catala": "Kazakh", "codi": "kk" },
+            { "angles": "Korean", "catala": "Coreà", "codi": "ko" },
+            { "angles": "Latvian", "catala": "Letó", "codi": "lv" },
+            { "angles": "Lithuanian", "catala": "Lituà", "codi": "lt" },
+            { "angles": "Macedonian", "catala": "Macedoni", "codi": "mk" },
+            { "angles": "Malay", "catala": "Malai", "codi": "ms" },
+            { "angles": "Marathi", "catala": "Marathi", "codi": "mr" },
+            { "angles": "Maori", "catala": "Maori", "codi": "mi" },
+            { "angles": "Nepali", "catala": "Nepalès", "codi": "ne" },
+            { "angles": "Norwegian", "catala": "Noruec", "codi": "no" },
+            { "angles": "Persian", "catala": "Persa", "codi": "fa" },
+            { "angles": "Polish", "catala": "Polonès", "codi": "pl" },
+            { "angles": "Portuguese", "catala": "Portuguès", "codi": "pt" },
+            { "angles": "Romanian", "catala": "Romanès", "codi": "ro" },
+            { "angles": "Russian", "catala": "Rus", "codi": "ru" },
+            { "angles": "Serbian", "catala": "Serbi", "codi": "sr" },
+            { "angles": "Slovak", "catala": "Eslovac", "codi": "sk" },
+            { "angles": "Slovenian", "catala": "Eslovè", "codi": "sl" },
+            { "angles": "Spanish", "catala": "Espanyol", "codi": "es" },
+            { "angles": "Swahili", "catala": "Suahili", "codi": "sw" },
+            { "angles": "Swedish", "catala": "Suec", "codi": "sv" },
+            { "angles": "Tagalog", "catala": "Tagal", "codi": "tl" },
+            { "angles": "Tamil", "catala": "Tàmil", "codi": "ta" },
+            { "angles": "Thai", "catala": "Tai", "codi": "th" },
+            { "angles": "Turkish", "catala": "Turc", "codi": "tr" },
+            { "angles": "Ukrainian", "catala": "Ucraïnès", "codi": "uk" },
+            { "angles": "Urdu", "catala": "Urdú", "codi": "ur" },
+            { "angles": "Vietnamese", "catala": "Vietnamita", "codi": "vi" },
+            { "angles": "Welsh", "catala": "Gal·lès", "codi": "cy" }
+        ];
+
+        // Funció per ordenar un array d'objectes per una columna (alfabèticament)
+        function ordenarIdiomesPerColumna(array, columna) {
+            return [...array].sort((a, b) => {
+                const valA = (a[columna] || '').toString().toLowerCase();
+                const valB = (b[columna] || '').toString().toLowerCase();
+                if (valA < valB) return -1;
+                if (valA > valB) return 1;
+                return 0;
             });
-            
         }
 
+
         function generarOptionsSelect(json, columnaOrdenacio = '') {
+            console.log("🚀 ~ generarOptionsSelect ~ json:", json)
             let options = '';
-            
+            let jsonOrdenat
             if (columnaOrdenacio !== '') {
-                const jsonOrdenat = ordenarPerColumna(json, columnaOrdenacio);
+                console.log("🚀 ~ generarOptionsSelect ~ columnaOrdenacio:", columnaOrdenacio)
+                // jsonOrdenat = ordenarPerColumna(json, columnaOrdenacio);
+                jsonOrdenat = ordenarIdiomesPerColumna(json, columnaOrdenacio);
             } else {
-                const jsonOrdenat = [...json];
+                jsonOrdenat = [...json];
             }   
+            console.log("🚀 ~ generarOptionsSelect ~ jsonOrdenat:", jsonOrdenat)
 
             // Recorrem cada idioma del JSON
             jsonOrdenat.forEach(row => {
@@ -1489,7 +1484,7 @@
         // Iniciar l'aplicació
         document.addEventListener('DOMContentLoaded', () => {
 
-            const optionsIdioma = generarOptionsSelect(idiomesJSON)
+            const optionsIdioma = generarOptionsSelect(idiomesJSON, "catala")
             
             //frontend
             inserirOptionsSelect("idioma-traduccio", optionsIdioma)
