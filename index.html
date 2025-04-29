@@ -462,6 +462,29 @@
                             <div>
                                 <h4 class="text-md font-semibold mb-2 text-gray-700 dark:text-gray-300">Text traduït</h4>
                                 <div id="text-imatge-traduit" class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-gray-800 dark:text-gray-200 text-sm"></div>
+                                
+                                <!-- Botó per convertir a àudio -->
+                                <div class="mt-3 flex items-center space-x-2">
+                                    <button id="boto-audio-imatge" class="flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded transition-colors duration-200 cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+                                        </svg>
+                                        Escoltar traducció
+                                    </button>
+                                    
+                                    <!-- Botó per descarregar àudio (inicialment ocult) -->
+                                    <button id="descarregar-audio-imatge" class="hidden items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-medium rounded transition-colors duration-200 cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                        </svg>
+                                        Descarregar àudio
+                                    </button>
+                                </div>
+                                
+                                <!-- Reproductor d'àudio (inicialment ocult) -->
+                                <div id="audio-imatge-container" class="mt-3 hidden">
+                                    <audio id="audio-imatge-reproductor" controls class="w-full"></audio>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -929,19 +952,16 @@
 
                 const text = await response.text();
 
+                
                 return text;
             }
 
             async traduirText(text, idiomaOrigen, idiomaDesti) {
 
-                // const idiomaOrigen = document.getElementById('idioma-origen');
-                // const idiomaDesti = document.getElementById('idioma-desti');
-
-                const idiomaOrigenNom = idiomaOrigen.value // this.getNomIdioma(idiomaOrigen);
-                const idiomaDestiNom = idiomaDesti.value   // this.getNomIdioma(idiomaDesti);
-
-                const content = `You are a professional translator. Translate the following text from ${idiomaOrigenNom} to ${idiomaDestiNom}. Only return the translation, nothing else.`
+                const content = `You are a professional translator. Translate the following text from ${idiomaOrigen} to ${idiomaDesti}. Only return the translation, nothing else.`
                 // const content = `Ets un traductor professional. Traduïu el següent text de ${idiomaOrigenNom} a ${idiomaDestiNom}. Torna només la traducció, res més.`
+
+                console.log("🚀 ~ traduirText ~ content:", content)
 
                 // Pots utilitzar altres models de OpenAI com: 
                 // "gpt-4o", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo", etc.
@@ -981,25 +1001,6 @@
 
             async textAAudio(text, idioma) {
                 // Seleccionar la veu segons l'idioma
-                // let veu = 'alloy'; // veu per defecte
-                
-                // switch (idioma) {
-                //     case 'es':
-                //         veu = 'nova';
-                //         break;
-                //     case 'en':
-                //         veu = 'echo';
-                //         break;
-                //     case 'fr':
-                //         veu = 'shimmer';
-                //         break;
-                //     case 'de':
-                //         veu = 'onyx';
-                //         break;
-                //     case 'ca':
-                //         veu = 'alloy';
-                //         break;
-                // }
 
                 const veu = this.veuTraduida;
 
@@ -1024,6 +1025,8 @@
                 const audioBlob = await response.blob();
                 return audioBlob;
             }
+
+            
 
             async extraureTextImatge(imatgeBase64, idiomaDesti) {
                 // Utilitzem l'API de Vision (gpt-4-vision-preview -> gpt-4o) per extreure text d'una imatge
@@ -1147,6 +1150,8 @@
                 // Variables per emmagatzemar els blobs d'àudio (afegit nou)
                 this.ultimAudioOriginal = null;
                 this.ultimAudioTraduit = null;
+
+                this.ultimTraduccioImatge = null;
                 
                 this.inicialitzar();
             }
@@ -1887,78 +1892,100 @@
                 textImatgeTraduit.textContent = textTraduit;
                 
                 resultatsImatge.classList.remove('hidden');
+
+                // Guardar la traducció per a possibles usos futurs (com generar àudio)
+                this.ultimTraduccioImatge = textTraduit;
+
+                // Configurar el botó d'àudio
+                this.configurarBotoAudioImatge();
                 
                 // També podríem afegir això a l'historial si volguéssim
                 this.afegirAHistorialImatge(textOriginal, textTraduit);
             }
 
-            // // Processar i traduir imatges
-            // async processarImatge(imatgeBase64) {
-            //     if (!this.gestorOpenAI.isConfigured()) {
-            //         alert('Cal configurar la clau API d\'OpenAI primer.');
-            //         this.mostrarModalConfiguracio();
-            //         return;
-            //     }
+            
+            // 2. Afegeix aquest nou mètode per configurar el botó d'àudio de la imatge
+            configurarBotoAudioImatge() {
+                const botoAudioImatge = document.getElementById('boto-audio-imatge');
+                const descarregarAudioImatge = document.getElementById('descarregar-audio-imatge');
+                const audioImatgeContainer = document.getElementById('audio-imatge-container');
+                const audioImatgeReproductor = document.getElementById('audio-imatge-reproductor');
                 
-            //     try {
-            //         // Mostrar el loader de càrrega
-            //         this.mostrarEstatProcessant('Extraient text de la imatge...');
+                // Variable per emmagatzemar el blob d'àudio
+                this.blobAudioImatge = null;
+                
+                botoAudioImatge.addEventListener('click', async () => {
+                    if (!this.ultimTraduccioImatge) {
+                        alert('No hi ha text per convertir a àudio.');
+                        return;
+                    }
                     
-            //         // 1. Extreure text de la imatge
-            //         const textExtret = await this.gestorOpenAI.extraureTextImatge(imatgeBase64);
-                    
-            //         if (!textExtret || textExtret.toLowerCase().includes('no hi ha text') || textExtret.toLowerCase().includes('no text')) {
-            //             this.mostrarResultatsImatge('No s\'ha detectat text a la imatge.', '');
-            //             const estatTraduccio = document.getElementById('estat-traduccio');
-            //             estatTraduccio.classList.add('hidden');
-            //             return;
-            //         }
-                    
-            //         console.log('Text extret de la imatge:', textExtret);
-                    
-            //         // Actualitzar estat
-            //         this.mostrarEstatProcessant('Traduint text...');
-                    
-            //         // 2. Detectar l'idioma origen (opcional, podríem utilitzar el seleccionat per l'usuari)
-            //         // Aquí assumirem que l'usuari ha seleccionat l'idioma origen correctament
-                    
-            //         // 3. Traduir el text a l'idioma destí
-            //         const idiomaOrigen = document.getElementById('idioma-origen').value;
-            //         const idiomaDesti = document.getElementById('idioma-desti').value;
+                    try {
+                        // Mostrar indicador de càrrega
+                        botoAudioImatge.disabled = true;
+                        botoAudioImatge.classList.add('opacity-50');
+                        botoAudioImatge.querySelector('svg').classList.add('animate-pulse');
+                        botoAudioImatge.textContent = "Generant àudio...";
+                        
+                        // Obtenir l'idioma destí seleccionat
+                        const idiomaDestiSelect = document.getElementById('idioma-desti');
+                        const idiomaDestiCodi = idiomaDestiSelect.options[idiomaDestiSelect.selectedIndex].dataset.codi;
+                        
+                        // Generar àudio a partir del text traduït
+                        this.blobAudioImatge = await this.gestorOpenAI.textAAudio(this.ultimTraduccioImatge, idiomaDestiCodi);
+                        
+                        // Configurar el reproductor d'àudio
+                        const audioUrl = URL.createObjectURL(this.blobAudioImatge);
+                        audioImatgeReproductor.src = audioUrl;
+                        audioImatgeContainer.classList.remove('hidden');
+                        
+                        // Mostrar el botó de descàrrega
+                        descarregarAudioImatge.classList.remove('hidden');
+                        descarregarAudioImatge.classList.add('flex');
+                        
+                        // Reproduir automàticament
+                        audioImatgeReproductor.play();
+                        
+                    } catch (error) {
+                        console.error('Error en generar àudio:', error);
+                        alert('Error en generar àudio: ' + error.message);
+                    } finally {
+                        // Restaurar l'estat del botó
+                        botoAudioImatge.disabled = false;
+                        botoAudioImatge.classList.remove('opacity-50');
+                        botoAudioImatge.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
+                            </svg>
+                            Escoltar traducció
+                        `;
+                    }
+                });
+                
+                // Configurar el botó de descàrrega d'àudio
+                descarregarAudioImatge.addEventListener('click', () => {
+                    if (this.blobAudioImatge) {
+                        const idiomaDestiSelect = document.getElementById('idioma-desti');
+                        const idiomaDestiNom = idiomaDestiSelect.options[idiomaDestiSelect.selectedIndex].text;
+                        const nomArxiu = `traduccio_imatge_${idiomaDestiNom.toLowerCase()}_${new Date().getTime()}.mp3`;
+                        
+                        const url = URL.createObjectURL(this.blobAudioImatge);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = nomArxiu;
+                        document.body.appendChild(a);
+                        a.click();
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }, 100);
+                    }
+                });
+            }
 
-            //         const traduccio = await this.gestorOpenAI.traduirText(textExtret, idiomaOrigen, idiomaDesti);
-                    
-            //         console.log('Traducció:', traduccio);
-                    
-            //         // 4. Mostrar els resultats
-            //         this.mostrarResultatsImatge(textExtret, traduccio);
-                    
-            //         // Ocultar el loader
-            //         const estatTraduccio = document.getElementById('estat-traduccio');
-            //         estatTraduccio.classList.add('hidden');
-                    
-            //     } catch (error) {
-            //         console.error('Error en processar la imatge:', error);
-            //         const missatgeError = error.message || 'Error en processar la imatge';
-                    
-            //         const estatTraduccio = document.getElementById('estat-traduccio');
-            //         const missatgeEstat = document.getElementById('missatge-estat');
-                    
-            //         missatgeEstat.textContent = missatgeError;
-                    
-            //         // Canviar l'estil del loader per indicar error
-            //         const loader = document.getElementById('loader-traduccio');
-            //         loader.classList.remove('border-blue-500', 'animate-spin');
-            //         loader.classList.add('border-red-500');
-                    
-            //         setTimeout(() => {
-            //             estatTraduccio.classList.add('hidden');
-            //             // Restablir el loader
-            //             loader.classList.remove('border-red-500');
-            //             loader.classList.add('border-blue-500', 'animate-spin');
-            //         }, 5000);
-            //     }
-            // }
+
             async processarImatge(imatgeBase64) {
                 if (!this.gestorOpenAI.isConfigured()) {
                     alert('Cal configurar la clau API d\'OpenAI primer.');
@@ -1989,12 +2016,12 @@
                     this.mostrarEstatProcessant('Traduint text...');
                     
                     // 2. Obtenir els codis d'idioma dels selectors
-                    const idiomaOrigenSelect = document.getElementById('idioma-origen');
-                    const idiomaDestiSelect = document.getElementById('idioma-desti');
+                    const idiomaOrigenSelect = document.getElementById('idioma-origen').value;
+                    const idiomaDestiSelect = document.getElementById('idioma-desti').value;
                     
                     // Obtenir els codis d'idioma, no els noms
-                    const idiomaOrigenCodi = idiomaOrigenSelect.options[idiomaOrigenSelect.selectedIndex].dataset.codi;
-                    const idiomaDestiCodi = idiomaDestiSelect.options[idiomaDestiSelect.selectedIndex].dataset.codi;
+                    // const idiomaOrigenCodi = idiomaOrigenSelect.options[idiomaOrigenSelect.selectedIndex].dataset.codi;
+                    // const idiomaDestiCodi = idiomaDestiSelect.options[idiomaDestiSelect.selectedIndex].dataset.codi;
                     
                     // 3. Traduir el text utilitzant els codis d'idioma correctes
                     // const traduccio = await this.gestorOpenAI.traduirText(textExtret, idiomaOrigenCodi, idiomaDestiCodi);
