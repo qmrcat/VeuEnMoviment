@@ -11,68 +11,8 @@
     <link rel="manifest" href="./site.webmanifest">
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link href="./output.css" rel="stylesheet">
-    <style>
-        /* Assegurar que les transicions de temes són suaus */
-        html.dark {
-            color-scheme: dark;
-        }
-        
-        body, html {
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        /* Estils per al loader */
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
-        .drop-zone {
-            transition: all 0.3s ease;
-        }
+    <link href="./styles.css" rel="stylesheet">
 
-        .drop-zone.drag-active {
-            border-color: #3b82f6 !important; /* blue-500 */
-            background-color: #eff6ff !important; /* blue-50 */
-        }
-
-        /* Estils per al mode fosc */
-        .dark .drop-zone.drag-active {
-            border-color: #60a5fa !important; /* blue-400 */
-            background-color: #1e3a8a !important; /* blue-900 */
-        }
-        .zona-imatge {
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        /* Estil per al hover normal */
-        .zona-imatge:hover {
-            border-color: #93c5fd; /* blue-300 */
-            background-color: #eff6ff; /* blue-50 */
-        }
-
-        /* Estil per al moment en què s'arrossega una imatge a sobre */
-        .zona-imatge.drag-active {
-            border-color: #3b82f6 !important; /* blue-500 */
-            background-color: #dbeafe !important; /* blue-100 */
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* blue-500 amb opacitat */
-            transform: scale(1.01);
-        }
-
-        /* Estils per al mode fosc */
-        .dark .zona-imatge:hover {
-            border-color: #60a5fa; /* blue-400 */
-            background-color: #1e3a8a; /* blue-900 */
-        }
-
-        .dark .zona-imatge.drag-active {
-            border-color: #60a5fa !important; /* blue-400 */
-            background-color: #1e40af !important; /* blue-800 */
-            box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); /* blue-400 amb opacitat */
-        }
-    </style>
 </head>
 <body class="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors duration-200">
     <div id="app" class="container mx-auto px-4 py-8">
@@ -114,21 +54,19 @@
 <div id="modal-configuracio" class="fixed inset-0 z-50 hidden flex items-center justify-center">
     <!-- fons semitransparent -->
     <div id="tanca-modal" class="absolute inset-0 bg-black bg-opacity-50"></div>
-  
     <!-- contenidor principal -->
     <div class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md z-10 flex flex-col max-h-[85vh]">
-      
-      <!-- capçalera fixa -->
-      <header class="flex-none p-4 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Configuració API</h2>
-          <button id="tanca-configuracio" type="button"
-                  class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 
-                         cursor-pointer p-2 text-2xl rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-            ✕
-          </button>
-        </div>
-      </header>
+        <!-- capçalera fixa -->
+        <header class="flex-none p-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-center">
+                <h2 class="text-xl font-semibold text-gray-800 dark:text-white">Configuració API</h2>
+                <button id="tanca-configuracio" type="button"
+                        class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 
+                            cursor-pointer p-2 text-2xl rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
+                    ✕
+                </button>
+            </div>
+        </header>
         
         <!-- CONTINGUT AMB SCROLL - amb alçada limitada -->
         <div class="overflow-y-auto flex-grow px-4 py-2">
@@ -270,7 +208,7 @@
                         <!-- Veu per idioma traduït -->
                         <div>
                             <label for="idioma-traduccio" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                               Idioma a traduïr
+                                Idioma a traduïr
                             </label>
                             <select id="idioma-traduccio" 
                                     class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md 
@@ -290,11 +228,10 @@
         <!-- PEU FIX AMB BOTÓ DE DESAR -->
         <footer class="flex-none p-4 border-t border-gray-200 dark:border-gray-700">
             <button type="submit" form="form-api"
-                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-lg">
-              Desar configuració
+                    class="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer text-lg">
+                Desar configuració
             </button>
-          </footer>
+        </footer>
     </div>
 </div>
 
@@ -335,8 +272,8 @@
                     <div class="flex items-center justify-center">
                         <button id="intercanviar-idiomes" 
                                 class="p-2 rounded-full bg-transparent hover:bg-gray-200 dark:bg-transparent dark:hover:bg-gray-600 
-                                      border-transparent dark:border-transparent focus:outline-none focus:ring-2 
-                                      focus:ring-blue-500 transition-colors duration-200 cursor-pointer">
+                                    border-transparent dark:border-transparent focus:outline-none focus:ring-2 
+                                    focus:ring-blue-500 transition-colors duration-200 cursor-pointer">
 
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />

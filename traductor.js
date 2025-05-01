@@ -1,6 +1,7 @@
 import { GestorAudio } from './audio.js';
 import { GestorOpenAI } from './openai.js';
 
+
 // Classe principal de l'aplicació
 export class AplicacioTraductor {
     constructor() {
@@ -20,7 +21,7 @@ export class AplicacioTraductor {
         
         this.inicialitzar();
     }
-    
+
     
     inicialitzar() {
 
