@@ -21,6 +21,7 @@ export class AplicacioTraductor {
         this.inicialitzar();
     }
     
+    
     inicialitzar() {
 
         // Comprovar si l'API està configurada

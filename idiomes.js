@@ -58,3 +58,4 @@ export const idiomesJSON = [
     { "angles": "vietnamese", "catala": "vietnamita", "codi": "vi" },
     { "angles": "welsh", "catala": "gal·lès", "codi": "cy" }
 ];
+
