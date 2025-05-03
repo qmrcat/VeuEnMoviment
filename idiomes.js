@@ -1,5 +1,4 @@
 
-
 export const idiomesJSON = [
     { "angles": "autodetection", "catala": "autodetecció", "codi": "--" },
     { "angles": "afrikaans", "catala": "afrikaans", "codi": "af" },

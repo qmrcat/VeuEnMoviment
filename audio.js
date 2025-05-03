@@ -1,5 +1,3 @@
-
-
 // Classe per gestionar l'àudio
 export class GestorAudio {
     constructor() {

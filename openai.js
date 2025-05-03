@@ -1,5 +1,3 @@
-
-
 // Classe per gestionar l'API d'OpenAI
 export class GestorOpenAI {
     constructor() {

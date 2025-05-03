@@ -18,6 +18,12 @@ export class AplicacioTraductor {
         this.ultimAudioTraduit = null;
 
         this.ultimTraduccioImatge = null;
+
+        // Comprovar si és la primera visita
+        this.primeraVisita = localStorage.getItem('primera-visita') === null;
+        if (this.primeraVisita) {
+            localStorage.setItem('primera-visita', 'false');
+        }
         
         this.inicialitzar();
     }
@@ -49,6 +55,30 @@ export class AplicacioTraductor {
         // Configurar botons de descàrrega (afegit nou)
         this.configurarBotonsDescarrega();
 
+        // Configurar selector d'idioma
+        this.configurarSelectorIdioma();
+
+    }
+    
+    // Afegir aquest nou mètode a la classe AplicacioTraductor
+    configurarSelectorIdioma() {
+        const selectorIdioma = document.getElementById('idioma-interficie');
+        if (selectorIdioma) {
+            // Carregar l'idioma desat o utilitzar català per defecte
+            const idiomaActual = localStorage.getItem('idioma-interficie') || 'ca';
+            selectorIdioma.value = idiomaActual;
+            
+            // Aplicar traduccions
+            import('./utils.js').then(module => {
+                module.traduirInterficie(idiomaActual);
+                
+                // Afegir listener al selector d'idioma
+                selectorIdioma.addEventListener('change', (e) => {
+                    const idioma = e.target.value;
+                    module.traduirInterficie(idioma);
+                });
+            });
+        }
     }
     
     comprovarConfiguracio() {
@@ -56,6 +86,53 @@ export class AplicacioTraductor {
         
         if (!this.gestorOpenAI.isConfigured()) {
             avisApi.classList.remove('hidden');
+
+            // Actualitzar el contingut del missatge si és la primera visita
+            if (this.primeraVisita) {
+                const missatgeAvis = document.getElementById('missatge-avis');
+                if (missatgeAvis) {
+                    missatgeAvis.innerHTML = `
+                        <p class="text-sm text-yellow-700 dark:text-yellow-200 mb-2">
+                            <strong>Català:</strong> Necessites configurar la teva clau API d'OpenAI per utilitzar l'aplicació.
+                            <button id="configura-api-ca" class="font-medium underline ml-1 focus:outline-none cursor-pointer">
+                                Configurar ara
+                            </button>
+                        </p>
+                        <p class="text-sm text-yellow-700 dark:text-yellow-200 mb-2">
+                            <strong>English:</strong> You need to set up your OpenAI API key to use the application.
+                            <button id="configura-api-en" class="font-medium underline ml-1 focus:outline-none cursor-pointer">
+                                Configure now
+                            </button>
+                        </p>
+                        <p class="text-sm text-yellow-700 dark:text-yellow-200 mb-2">
+                            <strong>Français:</strong> Vous devez configurer votre clé API OpenAI pour utiliser l'application.
+                            <button id="configura-api-fr" class="font-medium underline ml-1 focus:outline-none cursor-pointer">
+                                Configurer maintenant
+                            </button>
+                        </p>
+                        <p class="text-sm text-yellow-700 dark:text-yellow-200">
+                            <strong>Español:</strong> Necesitas configurar tu clave API de OpenAI para utilizar la aplicación.
+                            <button id="configura-api-es" class="font-medium underline ml-1 focus:outline-none cursor-pointer">
+                                Configurar ahora
+                            </button>
+                        </p>
+                    `;
+                    
+                    // Afegir event listeners als botons en diferents idiomes
+                    document.getElementById('configura-api-ca').addEventListener('click', () => {
+                        this.mostrarModalConfiguracio();
+                    });
+                    document.getElementById('configura-api-en').addEventListener('click', () => {
+                        this.mostrarModalConfiguracio();
+                    });
+                    document.getElementById('configura-api-fr').addEventListener('click', () => {
+                        this.mostrarModalConfiguracio();
+                    });
+                    document.getElementById('configura-api-es').addEventListener('click', () => {
+                        this.mostrarModalConfiguracio();
+                    });
+                }
+            }
         } else {
             avisApi.classList.add('hidden');
         }
@@ -82,10 +159,15 @@ export class AplicacioTraductor {
             modalConfig.classList.add('hidden');
         });
         
-        configuraApi.addEventListener('click', () => {
-            this.mostrarModalConfiguracio();
-        });
-        
+        // configuraApi.addEventListener('click', () => {
+        //     this.mostrarModalConfiguracio();
+        // });
+        if (configuraApi) {
+            configuraApi.addEventListener('click', () => {
+                this.mostrarModalConfiguracio();
+            });
+        }
+
         // Formulari API
         const formApi = document.getElementById('form-api');
         const apiKeyInput = document.getElementById('api-key');
