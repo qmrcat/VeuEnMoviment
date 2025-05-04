@@ -270,7 +270,8 @@ export class AplicacioTraductor {
                 
             } catch (error) {
                 console.error('Error en provar veu:', error);
-                alert('Error en generar àudio de prova: ' + error.message);
+                // alert('Error en generar àudio de prova: ' + error.message);
+                alert(traduccionsLabels('error_generar_audio_prova') + error.message);
             } finally {
                 // Restaurar l'estat del botó
                 boto.disabled = false;
@@ -297,7 +298,8 @@ export class AplicacioTraductor {
     async processarAudio(blob) {
 
         if (!this.gestorOpenAI.isConfigured()) {
-            alert('Cal configurar la clau API d\'OpenAI primer.');
+            // alert('Cal configurar la clau API d\'OpenAI primer.');
+            alert(traduccionsLabels('avis_falta_clau_api'));
             this.mostrarModalConfiguracio();
             return;
         }
@@ -307,14 +309,15 @@ export class AplicacioTraductor {
             const audioOriginal = blob;
             
             // Mostrar el loader de càrrega
-            this.mostrarEstatProcessant('Transcrivint àudio...');
+            this.mostrarEstatProcessant(traduccionsLabels('transcrivint_audio'));
             
             // 1. Transcriure àudio original a text
             const transcripcio = await this.gestorOpenAI.transcriureAudio(blob);
             console.log('Transcripció:', transcripcio);
             
             // Actualitzar estat
-            this.mostrarEstatProcessant('Traduint text...');
+            // this.mostrarEstatProcessant('Traduint text...');
+            this.mostrarEstatProcessant(traduccionsLabels('traduint_text'));
             
             // 2. Traduir el text a l'idioma destí
             const idiomaOrigen = document.getElementById('idioma-origen').value;
@@ -326,7 +329,8 @@ export class AplicacioTraductor {
             this.mostrarTextos(transcripcio, traduccio);
             
             // Actualitzar estat
-            this.mostrarEstatProcessant('Generant àudio...');
+            // this.mostrarEstatProcessant('Generant àudio...');
+            this.mostrarEstatProcessant(traduccionsLabels('generant_audio'));
             
             // 3. Convertir la traducció a àudio
             const audioTraduit = await this.gestorOpenAI.textAAudio(traduccio, idiomaDesti);
@@ -335,7 +339,8 @@ export class AplicacioTraductor {
             this.reproduirAudios(audioOriginal, audioTraduit);
         } catch (error) {
             console.error('Error en el procés de traducció:', error);
-            const missatgeError = error.message || 'Error en processar l\'àudio';
+            // const missatgeError = error.message || "Error en processar l'àudio";
+            const missatgeError = error.message || traduccionsLabels('error_processar_audio');
             
             const estatTraduccio = document.getElementById('estat-traduccio');
             const missatgeEstat = document.getElementById('missatge-estat');
@@ -417,6 +422,9 @@ export class AplicacioTraductor {
         const timestamp = new Date().getTime();
         const nomArxiuOriginal = `audio_original_${idiomaOrigen.toLowerCase()}_${timestamp}.mp3`;
         const nomArxiuTraduit = `audio_traduit_${idiomaDesti.toLowerCase()}_${timestamp}.mp3`;
+
+        const labelDescarregar = traduccionsLabels('descarregar');
+        const labelAvisNavegadorAudio = traduccionsLabels('avis_navegador_audio');
         
         element.innerHTML = `
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-3">
@@ -437,12 +445,12 @@ export class AplicacioTraductor {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                            Descarregar
+                            ${labelDescarregar}
                         </button>
                     </div>
                     <audio controls class="w-full mt-1">
                         <source src="${audioUrlOriginal}" type="audio/mp3">
-                        El teu navegador no suporta l'element d'àudio.
+                        ${labelAvisNavegadorAudio}
                     </audio>
                 </div>
                 <div>
@@ -454,12 +462,12 @@ export class AplicacioTraductor {
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                             </svg>
-                            Descarregar
+                            ${labelDescarregar}
                         </button>
                     </div>
                     <audio controls class="w-full mt-1">
                         <source src="${audioUrlTraduit}" type="audio/mp3">
-                        El teu navegador no suporta l'element d'àudio.
+                        ${labelAvisNavegadorAudio}
                     </audio>
                 </div>
             </div>
@@ -540,7 +548,8 @@ export class AplicacioTraductor {
             if (text) {
                 this.processarTextDirecte(text);
             } else {
-                alert('Si us plau, introdueix algun text per traduir.');
+                // alert('Si us plau, introdueix algun text per traduir.');
+                alert(traduccionsLabels('avis_introduir_text'));
             }
         });
 
@@ -550,7 +559,7 @@ export class AplicacioTraductor {
             if (text) {
                 this.processarTextDirecte(text);
             } else {
-                alert('Si us plau, introdueix algun text per traduir.');
+                alert(traduccionsLabels('avis_introduir_text'));
             }
         });
         
@@ -641,14 +650,16 @@ export class AplicacioTraductor {
 
     async processarTextDirecte(text) {
         if (!this.gestorOpenAI.isConfigured()) {
-            alert('Cal configurar la clau API d\'OpenAI primer.');
+            // alert('Cal configurar la clau API d\'OpenAI primer.');
+            alert(traduccionsLabels('avis_falta_clau_api'));
             this.mostrarModalConfiguracio();
             return;
         }
 
         try {
             // Mostrar el loader de càrrega
-            this.mostrarEstatProcessant('Generant àudio original...');
+            // this.mostrarEstatProcessant('Generant àudio original...');
+            this.mostrarEstatProcessant(traduccionsLabels('generant_audio_original'));
             
             // Guardar la transcripció (en aquest cas, el text introduït)
             this.ultimaTranscripcio = text;
@@ -658,7 +669,7 @@ export class AplicacioTraductor {
             const audioOriginal = await this.gestorOpenAI.generarAudioOriginal(text, idiomaOrigen);
             
             // Actualitzar estat
-            this.mostrarEstatProcessant('Traduint text...');
+            this.mostrarEstatProcessant(traduccionsLabels('traduint_text'));
             
             // Traduir el text a l'idioma destí
             const idiomaDesti = document.getElementById('idioma-desti').value;
@@ -672,7 +683,7 @@ export class AplicacioTraductor {
             this.mostrarTextos(text, traduccio);
             
             // Actualitzar estat
-            this.mostrarEstatProcessant('Generant àudio traduït...');
+            this.mostrarEstatProcessant(traduccionsLabels('generant_audio_traduit'));
             
             // Convertir la traducció a àudio
             const audioTraduit = await this.gestorOpenAI.textAAudio(traduccio, idiomaDesti);
@@ -681,7 +692,7 @@ export class AplicacioTraductor {
             this.reproduirAudios(audioOriginal, audioTraduit);
         } catch (error) {
             console.error('Error en el procés de traducció:', error);
-            const missatgeError = error.message || 'Error en processar el text';
+            const missatgeError = error.message || traduccionsLabels('error_processar_text');
             
             const estatTraduccio = document.getElementById('estat-traduccio');
             const missatgeEstat = document.getElementById('missatge-estat');
@@ -776,7 +787,7 @@ export class AplicacioTraductor {
             if (this.imatgeActual) {
                 this.processarImatge(this.imatgeActual);
             } else {
-                alert('Si us plau, puja una imatge primer.');
+                alert(traduccionsLabels('puja_imatge_primer'));
             }
         });
     }            
@@ -791,13 +802,13 @@ export class AplicacioTraductor {
         
         // Comprovar mida màxima (5MB)
         if (fitxer.size > 5 * 1024 * 1024) {
-            alert('La imatge és massa gran. Mida màxima permesa: 5MB');
+            alert(traduccionsLabels('avis_imatge_maxima_5mb'));
             return;
         }
         
         // Comprovar tipus de fitxer
         if (!['image/jpeg', 'image/jpg', 'image/png'].includes(fitxer.type)) {
-            alert('Format d\'imatge no suportat. Si us plau, utilitza PNG, JPG o JPEG.');
+            alert(traduccionsLabels(avis_format_imatge));
             return;
         }
         
@@ -945,7 +956,7 @@ export class AplicacioTraductor {
         
         botoAudioImatge.addEventListener('click', async () => {
             if (!this.ultimTraduccioImatge) {
-                alert('No hi ha text per convertir a àudio.');
+                alert(traduccionsLabels('avis_no_text_a_audio'));
                 return;
             }
             
@@ -954,7 +965,8 @@ export class AplicacioTraductor {
                 botoAudioImatge.disabled = true;
                 botoAudioImatge.classList.add('opacity-50');
                 botoAudioImatge.querySelector('svg').classList.add('animate-pulse');
-                botoAudioImatge.textContent = "Generant àudio...";
+                // botoAudioImatge.textContent = "Generant àudio...";
+                botoAudioImatge.textContent = traduccionsLabels('generant_audio');
                 
                 // Obtenir l'idioma destí seleccionat
                 const idiomaDestiSelect = document.getElementById('idioma-desti');
@@ -977,16 +989,18 @@ export class AplicacioTraductor {
                 
             } catch (error) {
                 console.error('Error en generar àudio:', error);
-                alert('Error en generar àudio: ' + error.message);
+                // alert('Error en generar àudio: ' + error.message);
+                alert(traduccionsLabels('erro_generar_audio') + error.message);
             } finally {
                 // Restaurar l'estat del botó
                 botoAudioImatge.disabled = false;
                 botoAudioImatge.classList.remove('opacity-50');
+                const escoltarTraduccio = traduccionsLabels('escoltar_traduccio')
                 botoAudioImatge.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z" clip-rule="evenodd" />
                     </svg>
-                    Escoltar traducció
+                    ${escoltarTraduccio}
                 `;
             }
         });
@@ -1017,14 +1031,15 @@ export class AplicacioTraductor {
 
     async processarImatge(imatgeBase64) {
         if (!this.gestorOpenAI.isConfigured()) {
-            alert('Cal configurar la clau API d\'OpenAI primer.');
+            alert(traduccionsLabels('avis_falta_clau_api'));
             this.mostrarModalConfiguracio();
             return;
         }
         
         try {
             // Mostrar el loader de càrrega
-            this.mostrarEstatProcessant('Extraient text de la imatge...');
+            // this.mostrarEstatProcessant('Extraient text de la imatge...');
+            this.mostrarEstatProcessant(traduccionsLabels('extraient_text_imatge'));
 
             const selectOrigen = document.getElementById('idioma-origen');
             const selectDesti = document.getElementById('idioma-desti');
@@ -1032,8 +1047,8 @@ export class AplicacioTraductor {
             // 1. Extreure text de la imatge
             const textExtret = await this.gestorOpenAI.extraureTextImatge(imatgeBase64, selectDesti);
                                 
-            if (!textExtret || textExtret.toLowerCase().includes('no hi ha text') || textExtret.toLowerCase().includes('no text')) {
-                this.mostrarResultatsImatge('No s\'ha detectat text a la imatge.', '');
+            if (!textExtret || textExtret.toLowerCase().includes(traduccionsLabels('no_hi_ha_text')) || textExtret.toLowerCase().includes(traduccionsLabels('no_text'))) {
+                this.mostrarResultatsImatge(traduccionsLabels('no_detectat_text'), '');
                 const estatTraduccio = document.getElementById('estat-traduccio');
                 estatTraduccio.classList.add('hidden');
                 return;
@@ -1042,7 +1057,7 @@ export class AplicacioTraductor {
             console.log('Text extret de la imatge:', textExtret);
             
             // Actualitzar estat
-            this.mostrarEstatProcessant('Traduint text...');
+            this.mostrarEstatProcessant(traduccionsLabels('traduint_text'));
             
             // 2. Obtenir els codis d'idioma dels selectors
             const idiomaOrigenSelect = document.getElementById('idioma-origen').value;
@@ -1067,7 +1082,7 @@ export class AplicacioTraductor {
             
         } catch (error) {
             console.error('Error en processar la imatge:', error);
-            const missatgeError = error.message || 'Error en processar la imatge';
+            const missatgeError = error.message || traduccionsLabels('error_processar_imatge');
             
             const estatTraduccio = document.getElementById('estat-traduccio');
             const missatgeEstat = document.getElementById('missatge-estat');
@@ -1097,23 +1112,26 @@ export class AplicacioTraductor {
         const dataActual = new Date().toLocaleString('ca-ES');
         const idiomaOrigen = document.getElementById('idioma-origen').selectedOptions[0].text;
         const idiomaDesti = document.getElementById('idioma-desti').selectedOptions[0].text;
-        
+        const labelImatge = traduccionsLabels('label_matge')
+        const labelTextOriginal= traduccionsLabels('label_text_original')
+        const labelTextTraduit = traduccionsLabels('label_text_traduccio')
+
         element.innerHTML = `
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-3">
                 <div>
                     <span class="text-sm text-gray-600 dark:text-gray-400">${dataActual}</span>
                     <span class="ml-2 text-sm font-medium text-gray-800 dark:text-white">
-                        ${idiomaOrigen} → ${idiomaDesti} (Imatge)
+                        ${idiomaOrigen} → ${idiomaDesti} (${labelImatge})
                     </span>
                 </div>
             </div>
             <div class="text-sm border-t border-gray-200 dark:border-gray-600 pt-2">
                 <div class="mb-2">
-                    <span class="font-medium text-gray-700 dark:text-gray-300">Text original:</span>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">${labelTextOriginal}</span>
                     <p class="text-gray-800 dark:text-gray-200">${textOriginal}</p>
                 </div>
                 <div>
-                    <span class="font-medium text-gray-700 dark:text-gray-300">Traducció:</span>
+                    <span class="font-medium text-gray-700 dark:text-gray-300">${labelTextTraduit}</span>
                     <p class="text-gray-800 dark:text-gray-200">${textTraduit}</p>
                 </div>
             </div>

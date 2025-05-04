@@ -288,12 +288,13 @@ export class GestorOpenAI {
     
     async provarVeu(veu) {
         // Text de mostra per escoltar la veu
-        const textProva = "Hola, això és una mostra de la veu escollida. Perquè et facis una idea de com sona!";
+        // const textProva = "Hola, això és una mostra de la veu escollida. Perquè et facis una idea de com sona!";
+        const textProva = traduccionsLabels('text_de_prova_veu');
         
         try {
             // Verifica que hi ha una clau API configurada
             if (!this.apiKey) {
-                throw new Error('Cal configurar la clau API d\'OpenAI primer.');
+                throw new Error(traduccionsLabels('avis_falta_clau_api'));
             }
             
             const response = await fetch('https://api.openai.com/v1/audio/speech', {

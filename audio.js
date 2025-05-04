@@ -25,8 +25,9 @@ export class GestorAudio {
         // Comprovar si el navegador suporta getUserMedia
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
             this.botoGravacio.disabled = true;
-            this.estatGravacio.textContent = 'Navegador no compatible';
-            alert('El teu navegador no suporta l\'accés al micròfon. Prova amb Chrome, Firefox o Safari.');
+            this.estatGravacio.textContent = traduccionsLabels('navegador_no_compatible');
+            // alert('El teu navegador no suporta l\'accés al micròfon. Prova amb Chrome, Firefox o Safari.');
+            alert(traduccionsLabels('navegador_no_compatible_microfon'));
         }
     }
 
@@ -116,17 +117,24 @@ export class GestorAudio {
             console.error("Error en accedir al micròfon o no s'ha detectat");
             console.error(error);
             
-            let missatgeError = 'No s\'ha pogut accedir al micròfon.';
+            // let missatgeError = 'No s\'ha pogut accedir al micròfon.';
+            let missatgeError = traduccionsLabels('no_acces_microfon');
             
             if (error.name === 'NotAllowedError') {
-                missatgeError += '\n\nHas denegat el permís al micròfon. Per activar-lo:\n' +
-                                '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
-                                '2. Canvia el permís del micròfon a "Permet"\n' +
-                                '3. Recarrega la pàgina';
+                // missatgeError += '\n\nHas denegat el permís al micròfon. Per activar-lo:\n' +
+                //                 '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
+                //                 '2. Canvia el permís del micròfon a "Permet"\n' +
+                //                 '3. Recarrega la pàgina';
+                missatgeError += traduccionsLabels('avis_us_microfon_1') +
+                                    traduccionsLabels('avis_us_microfon_2') +
+                                    traduccionsLabels('avis_us_microfon_3') +
+                                    traduccionsLabels('avis_us_microfon_4');
             } else if (error.name === 'NotFoundError') {
-                missatgeError += '\n\nNo s\'ha trobat cap micròfon. Assegura\'t que en tens un connectat.';
+                // missatgeError += '\n\nNo s\'ha trobat cap micròfon. Assegura\'t que en tens un connectat.';
+                missatgeError += traduccionsLabels('avis_us_microfon_5');
             } else if (error.name === 'NotReadableError') {
-                missatgeError += '\n\nEl micròfon està sent utilitzat per una altra aplicació.';
+                // missatgeError += '\n\nEl micròfon està sent utilitzat per una altra aplicació.';
+                missatgeError += traduccionsLabels('avis_us_microfon_6');
             }
             
             alert(missatgeError);
@@ -146,13 +154,13 @@ export class GestorAudio {
     
     actualitzarUI(gravant) {
         if (gravant) {
-            this.estatGravacio.textContent = 'Aturar gravació';
+            this.estatGravacio.textContent = traduccionsLabels('aturar_gravacio');
             this.botoGravacio.classList.remove('bg-red-500', 'hover:bg-red-600');
             this.botoGravacio.classList.add('bg-blue-500', 'hover:bg-blue-600');
             this.indicadorGravacio.classList.remove('hidden');
             this.botoCancelar.classList.remove('hidden'); // Mostrem el botó de cancel·lació
         } else {
-            this.estatGravacio.textContent = 'Començar gravació';
+            this.estatGravacio.textContent = traduccionsLabels('començar_gravacio');
             this.botoGravacio.classList.remove('bg-blue-500', 'hover:bg-blue-600');
             this.botoGravacio.classList.add('bg-red-500', 'hover:bg-red-600');
             this.indicadorGravacio.classList.add('hidden');

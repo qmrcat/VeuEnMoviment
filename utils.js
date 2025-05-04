@@ -65,7 +65,9 @@ export function omplirSelectsIdiomes(idiomesJSON) {
     inserirOptionsSelect("idioma-desti", optionsIdioma)
 }
 
-export function traduirInterficie(idioma) {
+
+export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
+
     const traduccions = {
         'ca': {
             'config_api': 'Configuració API',
@@ -101,6 +103,44 @@ export function traduirInterficie(idioma) {
             'traduccio': 'Traducció',
 
             'placeholder_entrada_text': 'Escriu el text que vols traduir...',
+            'placeholder_api_key': "Introdueix la teva clau API d'OpenAI aquí...",
+            'error_generar_audio_prova': 'Error en generar àudio de prova: ',
+            'avis_falta_clau_api': 'Cal configurar la clau API d\'OpenAI primer.',
+            'transcrivint_audio': 'Transcrivint àudio...',
+            'traduint_text': 'Traduint text...',
+            'generant_audio': 'Generant àudio...',
+            'error_processar_audio': "Error en processar l'àudio",
+            'avis_navegador_audio': "El teu navegador no suporta l'element d'àudio.",
+            'avis_introduir_text': 'Si us plau, introdueix algun text per traduir.',
+            'generant_audio_original': 'Generant àudio original...',
+            'generant_audio_traduit': 'Generant àudio traduït...',
+            'error_processar_text': "Error en processar el text",
+            'puja_imatge_primer': 'Si us plau, puja una imatge primer.',
+            'avis_imatge_maxima_5mb': 'La imatge és massa gran. Mida màxima permesa: 5MB',
+            'avis_format_imatge': "Format d'imatge no suportat. Si us plau, utilitza PNG, JPG o JPEG.",
+            'avis_no_text_a_audio': 'No hi ha text per convertir a àudio.',
+            'erro_generar_audio': 'Error en generar àudio: ',
+            'escoltar_traduccio': 'Escoltar traducció',
+            'extraient_text_imatge': 'Extraient text de la imatge...',
+            'no_hi_ha_text': 'no hi ha text',
+            'no_text': 'no text',
+            'no_detectat_text': "No s'ha detectat text a la imatge.",
+            'error_processar_imatge': 'Error en processar la imatge',
+            'label_matge': 'Imatge',
+            'label_text_original': 'Text original',
+            'label_text_traduccio': 'Traducció:',
+            'text_de_prova_veu': "Hola, això és una mostra de la veu escollida. Perquè et facis una idea de com sona!",
+            'navegador_no_compatible': 'Navegador no compatible',
+            'navegador_no_compatible_microfon': "El teu navegador no suporta l'accés al micròfon. Prova amb Chrome, Firefox o Safari.",
+            'no_acces_microfon': "No s'ha pogut accedir al micròfon.",
+            'avis_us_microfon_1': '\n\nHas denegat el permís al micròfon. Per activar-lo:\n',
+            'avis_us_microfon_2': "1. Fes clic a la icona del cadenat a la barra d'adreces\n",
+            'avis_us_microfon_3': '2. Canvia el permís del micròfon a "Permet"\n',
+            'avis_us_microfon_4': '3. Recarrega la pàgina',
+            'avis_us_microfon_5': "\n\nNo s'ha trobat cap micròfon. Assegura't que en tens un connectat.",
+            'avis_us_microfon_6': '\n\nEl micròfon està sent utilitzat per una altra aplicació.',
+            'aturar_gravacio': 'Aturar gravació',
+            'començar_gravacio': 'Començar gravació',   
         },
         'en': {
             'config_api': 'API Configuration',
@@ -134,7 +174,6 @@ export function traduirInterficie(idioma) {
             'descarregar': 'Download',
             'transcripcio_original': 'Original transcription',
             'traduccio': 'Translation',
-
             'clau_api': "OpenAI API Key",
             'mostrar_clau_api': 'Show key',
             'missatge_descrip_api_navegador': "The API key will be saved locally in your browser and will never be sent to our server.",
@@ -151,7 +190,46 @@ export function traduirInterficie(idioma) {
             'idioma_a_traduir': 'Language to translate',
             'desar_configuracio': 'Save configuration',
 
-            'placeholder_entrada_text': 'Escriu el text que vols traduir...',
+            'placeholder_entrada_text': 'Write the text you want to translate...',
+            'placeholder_api_key': 'Enter your OpenAI API key here...',
+            'error_generar_audio_prova': 'Error generating test audio: ',
+            'avis_falta_clau_api': 'You need to configure the OpenAI API key first.',
+            'transcrivint_audio': 'Transcribing audio...',
+            'traduint_text': 'Translating text...',
+            'generant_audio': 'Generating audio...',
+            'error_processar_audio': 'Error processing the audio',
+            'avis_navegador_audio': 'Your browser does not support the audio element.',
+            'avis_introduir_text': 'Please enter some text to translate.',
+            'generant_audio_original': 'Generating original audio...',
+            'generant_audio_traduit': 'Generating translated audio...',
+            'error_processar_text': 'Error processing the text',
+            'puja_imatge_primer': 'Please upload an image first.',
+            'avis_imatge_maxima_5mb': 'The image is too large. Maximum allowed size: 5MB',
+            'avis_format_imatge': 'Unsupported image format. Please use PNG, JPG or JPEG.',
+            'avis_no_text_a_audio': 'There is no text to convert to audio.',
+            'erro_generar_audio': 'Error generating audio: ',
+            'escoltar_traduccio': 'Listen to translation',
+            'extraient_text_imatge': 'Extracting text from image...',
+            'no_hi_ha_text': 'there is no text',
+            'no_text': 'no text',
+            'no_detectat_text': 'No text has been detected in the image.',
+            'error_processar_imatge': 'Error processing the image',
+            'label_matge': 'Image',
+            'label_text_original': 'Original text',
+            'label_text_traduccio': 'Translation:',
+            'text_de_prova_veu': 'Hello, this is a sample of the chosen voice. Just so you get an idea of how it sounds!',
+            'navegador_no_compatible': 'Incompatible browser',
+            'navegador_no_compatible_microfon': 'Your browser does not support microphone access. Try with Chrome, Firefox or Safari.',
+            'no_acces_microfon': 'Could not access the microphone.',
+            'avis_us_microfon_1': '\n\nYou have denied microphone permission. To enable it:\n',
+            'avis_us_microfon_2': '1. Click on the padlock icon in the address bar\n',
+            'avis_us_microfon_3': '2. Change the microphone permission to "Allow"\n',
+            'avis_us_microfon_4': '3. Reload the page',
+            'avis_us_microfon_5': '\n\nNo microphone was found. Make sure you have one connected.',
+            'avis_us_microfon_6': '\n\nThe microphone is being used by another application.',
+            'aturar_gravacio': 'Stop recording',
+            'començar_gravacio': 'Start recording',
+   
         },
         'fr': {
             'config_api': 'Configuration API',
@@ -185,7 +263,6 @@ export function traduirInterficie(idioma) {
             'descarregar': 'Télécharger',
             'transcripcio_original': 'Transcription originale',
             'traduccio': 'Traduction',
-
             'clau_api': "Clé API OpenAI",
             'mostrar_clau_api': 'Afficher la clé',
             'missatge_descrip_api_navegador': "La clé API sera enregistrée localement dans votre navigateur et ne sera jamais envoyée à notre serveur.",
@@ -202,7 +279,45 @@ export function traduirInterficie(idioma) {
             'idioma_a_traduir': 'Langue à traduire',
             'desar_configuracio': 'Enregistrer la configuration',
 
-            'placeholder_entrada_text': 'Escriu el text que vols traduir...',
+            'placeholder_entrada_text': "Écrivez le texte que vous souhaitez traduire...",
+            'placeholder_api_key': "Saisissez votre clé API d'OpenAI ici...",
+            'error_generar_audio_prova': "Erreur lors de la génération de l'audio de test : ",
+            'avis_falta_clau_api': "Il faut configurer la clé API d'OpenAI d'abord.",
+            'transcrivint_audio': "Transcription audio en cours...",
+            'traduint_text': "Traduction du texte en cours...",
+            'generant_audio': "Génération audio en cours...",
+            'error_processar_audio': "Erreur lors du traitement de l'audio",
+            'avis_navegador_audio': "Votre navigateur ne prend pas en charge l'élément audio.",
+            'avis_introduir_text': "Veuillez introduire du texte à traduire.",
+            'generant_audio_original': "Génération de l'audio original en cours...",
+            'generant_audio_traduit': "Génération de l'audio traduit en cours...",
+            'error_processar_text': "Erreur lors du traitement du texte",
+            'puja_imatge_primer': "Veuillez télécharger une image d'abord.",
+            'avis_imatge_maxima_5mb': "L'image est trop grande. Taille maximale autorisée : 5MB",
+            'avis_format_imatge': "Format d'image non supporté. Veuillez utiliser PNG, JPG ou JPEG.",
+            'avis_no_text_a_audio': "Il n'y a pas de texte à convertir en audio.",
+            'erro_generar_audio': "Erreur lors de la génération audio : ",
+            'escoltar_traduccio': "Écouter la traduction",
+            'extraient_text_imatge': "Extraction du texte de l'image...",
+            'no_hi_ha_text': "il n'y a pas de texte",
+            'no_text': "pas de texte",
+            'no_detectat_text': "Aucun texte n'a été détecté dans l'image.",
+            'error_processar_imatge': "Erreur lors du traitement de l'image",
+            'label_matge': "Image",
+            'label_text_original': "Texte original",
+            'label_text_traduccio': "Traduction :",
+            'text_de_prova_veu': "Bonjour, ceci est un échantillon de la voix choisie. Pour vous donner une idée de comment elle sonne !",
+            'navegador_no_compatible': "Navigateur non compatible",
+            'navegador_no_compatible_microfon': "Votre navigateur ne prend pas en charge l'accès au microphone. Essayez avec Chrome, Firefox ou Safari.",
+            'no_acces_microfon': "Impossible d'accéder au microphone.",
+            'avis_us_microfon_1': "\n\nVous avez refusé l'autorisation du microphone. Pour l'activer :\n",
+            'avis_us_microfon_2': "1. Cliquez sur l'icône du cadenas dans la barre d'adresse\n",
+            'avis_us_microfon_3': "2. Changez l'autorisation du microphone à \"Autoriser\"\n",
+            'avis_us_microfon_4': "3. Rechargez la page",
+            'avis_us_microfon_5': "\n\nAucun microphone n'a été trouvé. Assurez-vous que vous en avez un connecté.",
+            'avis_us_microfon_6': "\n\nLe microphone est utilisé par une autre application.",
+            'aturar_gravacio': "Arrêter l'enregistrement",
+            'començar_gravacio': "Commencer l'enregistrement",
         },
         'es': {
             'config_api': 'Configuración API',
@@ -236,7 +351,6 @@ export function traduirInterficie(idioma) {
             'descarregar': 'Descargar',
             'transcripcio_original': 'Transcripción original',
             'traduccio': 'Traducción',
-
             'clau_api': "Clave API de OpenAI",
             'mostrar_clau_api': 'Mostrar clave',
             'missatge_descrip_api_navegador': "La clave API se guardará localmente en tu navegador y nunca se enviará a nuestro servidor.",
@@ -253,12 +367,67 @@ export function traduirInterficie(idioma) {
             'idioma_a_traduir': 'Idioma a traducir',
             'desar_configuracio': 'Guardar configuración',
 
-            'placeholder_entrada_text': 'Escriu el text que vols traduir...',
+            'placeholder_entrada_text': 'Escribe el texto que quieres traducir...',
+            'placeholder_api_key': 'Introduce tu clave API de OpenAI aquí...',
+            'error_generar_audio_prova': 'Error al generar audio de prueba: ',
+            'avis_falta_clau_api': 'Es necesario configurar la clave API de OpenAI primero.',
+            'transcrivint_audio': 'Transcribiendo audio...',
+            'traduint_text': 'Traduciendo texto...',
+            'generant_audio': 'Generando audio...',
+            'error_processar_audio': 'Error al procesar el audio',
+            'avis_navegador_audio': 'Tu navegador no soporta el elemento de audio.',
+            'avis_introduir_text': 'Por favor, introduce algún texto para traducir.',
+            'generant_audio_original': 'Generando audio original...',
+            'generant_audio_traduit': 'Generando audio traducido...',
+            'error_processar_text': 'Error al procesar el texto',
+            'puja_imatge_primer': 'Por favor, sube una imagen primero.',
+            'avis_imatge_maxima_5mb': 'La imagen es demasiado grande. Tamaño máximo permitido: 5MB',
+            'avis_format_imatge': 'Formato de imagen no soportado. Por favor, utiliza PNG, JPG o JPEG.',
+            'avis_no_text_a_audio': 'No hay texto para convertir a audio.',
+            'erro_generar_audio': 'Error al generar audio: ',
+            'escoltar_traduccio': 'Escuchar traducción',
+            'extraient_text_imatge': 'Extrayendo texto de la imagen...',
+            'no_hi_ha_text': 'no hay texto',
+            'no_text': 'sin texto',
+            'no_detectat_text': 'No se ha detectado texto en la imagen.',
+            'error_processar_imatge': 'Error al procesar la imagen',
+            'label_matge': 'Imagen',
+            'label_text_original': 'Texto original',
+            'label_text_traduccio': 'Traducción:',
+            'text_de_prova_veu': '¡Hola, esto es una muestra de la voz elegida. ¡Para que te hagas una idea de cómo suena!',
+            'navegador_no_compatible': 'Navegador no compatible',
+            'navegador_no_compatible_microfon': 'Tu navegador no soporta el acceso al micrófono. Prueba con Chrome, Firefox o Safari.',
+            'no_acces_microfon': 'No se ha podido acceder al micrófono.',
+            'avis_us_microfon_1': '\n\nHas denegado el permiso al micrófono. Para activarlo:\n',
+            'avis_us_microfon_2': '1. Haz clic en el icono del candado en la barra de direcciones\n',
+            'avis_us_microfon_3': '2. Cambia el permiso del micrófono a "Permitir"\n',
+            'avis_us_microfon_4': '3. Recarga la página',
+            'avis_us_microfon_5': '\n\nNo se ha encontrado ningún micrófono. Asegúrate de que tienes uno conectado.',
+            'avis_us_microfon_6': '\n\nEl micrófono está siendo utilizado por otra aplicación.',
+            'aturar_gravacio': 'Detener grabación',
+            'començar_gravacio': 'Comenzar grabación',
         }
     };
+
+    if(!clau){
+        return traduccions[idioma] || traduccions['ca'];
+    }
+
+    return traduccions[idioma][clau] || '';
+}
+
+export function obtemirIdiomaInterficie() {
+    // Obtenim l'idioma seleccionat de l'emmagatzematge local
+    const idioma = localStorage.getItem('idioma-interficie') || 'ca'; // català per defecte
+    return idioma;
+}
+
+export function traduirInterficie(idioma) {
+    
     
     // Si l'idioma no existeix, utilitzar català per defecte
-    const textos = traduccions[idioma] || traduccions['ca'];
+    // const textos = traduccions[idioma] || traduccions['ca'];
+    const textos = obtenirTraduccioIdioma(idioma)
     
     // Actualitzar els textos de la interfície
     document.querySelectorAll('[data-traduccio]').forEach(element => {
@@ -280,6 +449,14 @@ export function traduirInterficie(idioma) {
     localStorage.setItem('idioma-interficie', idioma);
     
     return true;
+}
+
+
+export function traduccionsLabels(clau){
+
+    const idioma = obtemirIdiomaInterficie()
+    return obtenirTraduccioIdioma(idioma, clau)
+
 }
 
 // Funció per obtenir l'idioma actual de la interfície
