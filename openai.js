@@ -1,3 +1,5 @@
+import { traduccionsLabels } from './utils.js';
+
 // Classe per gestionar l'API d'OpenAI
 export class GestorOpenAI {
     constructor() {

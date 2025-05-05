@@ -3,6 +3,7 @@ import { idiomesJSON } from './idiomes.js';
 import { AplicacioTraductor } from './traductor.js';
 import { omplirSelectsIdiomes } from './utils.js';
 
+
 // Iniciar l'aplicació
 document.addEventListener('DOMContentLoaded', () => {
 
