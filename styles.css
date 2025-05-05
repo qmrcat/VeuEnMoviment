@@ -145,3 +145,15 @@ body, html {
         padding: 0.5rem 1.25rem;
     }
 }
+
+/* Estil per al missatge flotant */
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

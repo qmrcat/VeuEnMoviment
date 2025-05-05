@@ -257,11 +257,22 @@
                             <div id="previsualitzacio-imatge" class="hidden mt-4 mb-4">
                                 <div class="relative">
                                     <img id="imatge-pujada" class="w-full h-auto rounded-lg" src="#" alt="Imatge pujada" />
-                                    <button id="eliminar-imatge" class="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
+                                    <div class="absolute top-2 right-2 flex flex-row gap-2">
+                                        <!-- Botó de descàrrega d'imatge (ara a l'esquerra) -->
+                                        <button id="descarregar-imatge" 
+                                                class="p-2 bg-green-500 text-white rounded-full hover:bg-green-600 focus:outline-none shadow-md order-1">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <!-- Botó eliminar imatge (ara a la dreta) -->
+                                        <button id="eliminar-imatge" 
+                                                class="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none shadow-md order-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             

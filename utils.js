@@ -144,7 +144,8 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
 
             'camera': 'Usar càmera',
             'capturar': 'Capturar',
-            'extreure_traduir': 'Extreure i traduir text'
+            'extreure_traduir': 'Extreure i traduir text',
+            'descarregar_imatge': 'Descarregar imatge',
         },
         'en': {
             'config_api': 'API Configuration',
@@ -236,7 +237,8 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
 
             'camera': 'Use camera',
             'capturar': 'Capture',
-            'extreure_traduir': 'Extract and translate text'
+            'extreure_traduir': 'Extract and translate text',
+             'descarregar_imatge': 'Download image',
    
         },
         'fr': {
@@ -329,7 +331,8 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
 
             'camera': 'Utiliser la caméra',
             'capturar': 'Capturer',
-            'extreure_traduir': 'Extraire et traduire le texte'
+            'extreure_traduir': 'Extraire et traduire le texte',
+            'descarregar_imatge': "Télécharger l'image",
         },
         'es': {
             'config_api': 'Configuración API',
@@ -421,7 +424,8 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
 
             'camera': 'Usar cámara',
             'capturar': 'Capturar',
-            'extreure_traduir': 'Extraer y traducir texto'
+            'extreure_traduir': 'Extraer y traducir texto',
+            'descarregar_imatge': 'Descargar imagen'
         }
     };
 
