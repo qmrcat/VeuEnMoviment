@@ -58,3 +58,61 @@ body, html {
     background-color: #1e40af !important; /* blue-800 */
     box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.3); /* blue-400 amb opacitat */
 }
+
+/* Estils per a la secció de càmera */
+#seccio-camera {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+#video-camera {
+    background-color: #111827; /* color fosc per quan s'està carregant el vídeo */
+    min-height: 300px;
+    object-fit: cover;
+}
+
+#capturar-imatge {
+    transition: all 0.2s;
+}
+
+#capturar-imatge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#capturar-imatge:active {
+    transform: translateY(0);
+}
+
+/* Animació de pulsació per al botó de captura */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+#capturar-imatge {
+    animation: pulse 2s infinite;
+}
+
+/* Estil responsiu per a mòbils */
+@media (max-width: 640px) {
+    #seccio-camera {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        border-radius: 0;
+    }
+    
+    #capturar-imatge {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+    }
+}

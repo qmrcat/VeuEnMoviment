@@ -36,12 +36,26 @@
                 <!-- MENU -->
                 <div class="flex gap-2 menu mt-2 md:mt-0 md:ml-auto">
                     <!-- Selector d'idioma de la interfície -->
-                    <select id="idioma-interficie" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
+                    <!-- <select id="idioma-interficie" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
                         <option value="ca">Català</option>
                         <option value="en">English</option>
                         <option value="fr">Français</option>
                         <option value="es">Español</option>
-                    </select>
+                    </select> -->
+                    <!-- Millora 1: Selector d'idiomes com a icona amb desplegable -->
+                    <div class="relative">
+                        <button id="boto-idiomes" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
+                        🌐
+                        </button>
+                        <div id="menu-idiomes" class="hidden absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-white dark:bg-gray-700 ring-1 ring-black ring-opacity-5 z-50">
+                        <ul class="py-1 text-gray-700 dark:text-white">
+                            <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600" data-lang="ca">Català</button></li>
+                            <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600" data-lang="en">English</button></li>
+                            <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600" data-lang="fr">Français</button></li>
+                            <li><button class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600" data-lang="es">Castellano</button></li>
+                        </ul>
+                        </div>
+                    </div>
                     <button id="tema-toggle" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
                         <span id="tema-icon">🌙</span>
                     </button>
@@ -206,6 +220,33 @@
                                     </label>
                                 </div>
                             </div>
+
+                                    <!-- Nou botó per capturar des de la càmera -->
+        <div class="mb-4 text-center">
+            <button id="boto-camera" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200 cursor-pointer flex items-center justify-center mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                </svg>
+                <span data-traduccio="camera">Usar càmera</span>
+            </button>
+        </div>
+        
+        <!-- Secció de càmera (inicialment oculta) -->
+        <div id="seccio-camera" class="hidden mb-4">
+            <div class="relative">
+                <video id="video-camera" class="w-full h-auto rounded-lg" autoplay playsinline></video>
+                <button id="capturar-imatge" class="absolute bottom-4 left-1/2 transform -translate-x-1/2 px-4 py-2 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none">
+                    <span data-traduccio="capturar">Capturar</span>
+                </button>
+                <button id="tancar-camera" class="absolute top-2 right-2 p-1 bg-gray-800 text-white rounded-full hover:bg-gray-700 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+            <!-- Canvas per capturar la imatge (ocult) -->
+            <canvas id="canvas-camera" class="hidden"></canvas>
+        </div>
                             
                             <!-- Previsualització de la imatge pujada -->
                             <div id="previsualitzacio-imatge" class="hidden mt-4 mb-4">

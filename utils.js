@@ -141,6 +141,10 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
             'avis_us_microfon_6': '\n\nEl micròfon està sent utilitzat per una altra aplicació.',
             'aturar_gravacio': 'Aturar gravació',
             'començar_gravacio': 'Començar gravació',   
+
+            'camera': 'Usar càmera',
+            'capturar': 'Capturar',
+            'extreure_traduir': 'Extreure i traduir text'
         },
         'en': {
             'config_api': 'API Configuration',
@@ -229,6 +233,10 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
             'avis_us_microfon_6': '\n\nThe microphone is being used by another application.',
             'aturar_gravacio': 'Stop recording',
             'començar_gravacio': 'Start recording',
+
+            'camera': 'Use camera',
+            'capturar': 'Capture',
+            'extreure_traduir': 'Extract and translate text'
    
         },
         'fr': {
@@ -318,6 +326,10 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
             'avis_us_microfon_6': "\n\nLe microphone est utilisé par une autre application.",
             'aturar_gravacio': "Arrêter l'enregistrement",
             'començar_gravacio': "Commencer l'enregistrement",
+
+            'camera': 'Utiliser la caméra',
+            'capturar': 'Capturer',
+            'extreure_traduir': 'Extraire et traduire le texte'
         },
         'es': {
             'config_api': 'Configuración API',
@@ -406,6 +418,10 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
             'avis_us_microfon_6': '\n\nEl micrófono está siendo utilizado por otra aplicación.',
             'aturar_gravacio': 'Detener grabación',
             'començar_gravacio': 'Comenzar grabación',
+
+            'camera': 'Usar cámara',
+            'capturar': 'Capturar',
+            'extreure_traduir': 'Extraer y traducir texto'
         }
     };
 

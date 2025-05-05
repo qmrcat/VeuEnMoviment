@@ -723,9 +723,107 @@ export class AplicacioTraductor {
         const eliminarImatge = document.getElementById('eliminar-imatge');
         const botoTraduirImatge = document.getElementById('boto-traduir-imatge');
         const resultatsImatge = document.getElementById('resultats-imatge');
-        
+
+        // Nou: Gestió de la càmera
+        const botoCamera = document.getElementById('boto-camera');
+        const seccioCamera = document.getElementById('seccio-camera');
+        const videoCamera = document.getElementById('video-camera');
+        const capturarImatge = document.getElementById('capturar-imatge');
+        const tancarCamera = document.getElementById('tancar-camera');
+        const canvasCamera = document.getElementById('canvas-camera');
+            
         // Variable per emmagatzemar les dades de la imatge
         this.imatgeActual = null;
+
+        // Stream de la càmera
+        let streamCamera = null;
+
+    // Nou: Event listener per al botó de càmera
+    botoCamera.addEventListener('click', async () => {
+        try {
+            // Comprovar si el navegador suporta getUserMedia
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('El teu navegador no suporta l\'accés a la càmera. Prova amb Chrome, Firefox o Safari.');
+                return;
+            }
+            
+            // Obtenir accés a la càmera
+            streamCamera = await navigator.mediaDevices.getUserMedia({ 
+                video: {
+                    facingMode: 'environment', // Prefereix la càmera posterior en mòbils
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            });
+            
+            // Assignar el stream al vídeo
+            videoCamera.srcObject = streamCamera;
+            
+            // Mostrar la secció de la càmera
+            seccioCamera.classList.remove('hidden');
+            botoCamera.classList.add('hidden');
+            dropZone.classList.add('hidden');
+            
+        } catch (error) {
+            console.error('Error en accedir a la càmera:', error);
+            
+            let missatgeError = 'No s\'ha pogut accedir a la càmera.';
+            
+            if (error.name === 'NotAllowedError') {
+                missatgeError += '\n\nHas denegat el permís a la càmera. Per activar-la:\n' +
+                                '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
+                                '2. Canvia el permís de la càmera a "Permet"\n' +
+                                '3. Recarrega la pàgina';
+            } else if (error.name === 'NotFoundError') {
+                missatgeError += '\n\nNo s\'ha trobat cap càmera. Assegura\'t que en tens una connectada.';
+            } else if (error.name === 'NotReadableError') {
+                missatgeError += '\n\nLa càmera està sent utilitzada per una altra aplicació.';
+            }
+            
+            alert(missatgeError);
+        }
+    });   
+    
+    // Nou: Event listener per capturar la imatge
+    capturarImatge.addEventListener('click', () => {
+        // Configurar el canvas amb les dimensions del vídeo
+        canvasCamera.width = videoCamera.videoWidth;
+        canvasCamera.height = videoCamera.videoHeight;
+        
+        // Dibuixar el frame actual del vídeo al canvas
+        const context = canvasCamera.getContext('2d');
+        context.drawImage(videoCamera, 0, 0, canvasCamera.width, canvasCamera.height);
+        
+        // Convertir el canvas a una imatge
+        const imatgeDataURL = canvasCamera.toDataURL('image/jpeg');
+        
+        // Mostrar la imatge capturada
+        imatgePujada.src = imatgeDataURL;
+        previsualitzacioImatge.classList.remove('hidden');
+        botoTraduirImatge.classList.remove('hidden');
+        
+        // Amagar els resultats si hi havia
+        resultatsImatge.classList.add('hidden');
+        
+        // Tancar la càmera
+        this.tancarStreamCamera(streamCamera);
+        seccioCamera.classList.add('hidden');
+        botoCamera.classList.remove('hidden');
+        dropZone.classList.remove('hidden');
+        
+        // Guardar les dades de la imatge en base64
+        this.imatgeActual = imatgeDataURL.split(',')[1];
+    });
+    
+    // Nou: Event listener per tancar la càmera
+    tancarCamera.addEventListener('click', () => {
+        this.tancarStreamCamera(streamCamera);
+        seccioCamera.classList.add('hidden');
+        botoCamera.classList.remove('hidden');
+        dropZone.classList.remove('hidden');
+    });    
+
+
         
         // Gestionar quan es puja una imatge a través de l'input file
         entradaImatge.addEventListener('change', (event) => {
@@ -792,6 +890,14 @@ export class AplicacioTraductor {
         });
     }            
 
+    // Afegir aquest nou mètode a la classe AplicacioTraductor
+tancarStreamCamera(stream) {
+    if (stream) {
+        stream.getTracks().forEach(track => {
+            track.stop();
+        });
+    }
+}
 
     // Nou mètode per processar un fitxer d'imatge (reutilitzat tant per l'input com pel drag & drop)
     processarFitxerImatge(fitxer) {
