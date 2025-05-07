@@ -44,6 +44,7 @@
                     </select> -->
                     <!-- Millora 1: Selector d'idiomes com a icona amb desplegable -->
                     <div class="relative">
+
                         <button id="boto-idiomes" class="p-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white cursor-pointer">
                         🌐
                         </button>
@@ -68,6 +69,22 @@
                 </div>
             </div>
         </header>
+
+        <!-- Botó per control de veu -->
+        <!-- <div class="mt-4 mb-4 flex justify-center">
+            <button id="boto-veu-control" class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg">
+            🎙️ <span data-traduccio="premut_donar_ordre">én premut per donar una ordre</span>
+            </button>
+        </div> -->
+
+        <button id="boto-veu-control" class="fixed bottom-4 right-4 z-60 w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg flex items-center justify-center transition-colors duration-200">
+            <!-- Icona micròfon -->
+            <svg id="icona-micro" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 1a3 3 0 00-3 3v6a3 3 0 006 0V4a3 3 0 00-3-3zm0 14a7 7 0 007-7h-2a5 5 0 01-10 0H5a7 7 0 007 7zm0 2v4m-4 0h8" />
+            </svg>
+            <!-- Punt vermell indicador -->
+            <span id="indicador-veu" class="hidden absolute top-1 right-1 w-3 h-3 bg-red-200 rounded-full animate-pulse"></span>
+        </button>
 
         <!-- Avís API no configurada -->
         <div id="avis-api" class="hidden bg-yellow-50 dark:bg-yellow-900 border-l-4 border-yellow-400 p-4 mb-6">
@@ -367,7 +384,8 @@
                             <div>
                                 <h4 class="text-md font-semibold mb-2 text-gray-700 dark:text-gray-300"
                                     data-traduccio="transcripcio_original">Transcripció original</h4>
-                                <div id="transcripcio_original" class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-gray-800 dark:text-gray-200 text-sm"></div>
+                                <!-- <div id="transcripcio_original" class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-gray-800 dark:text-gray-200 text-sm"></div> -->
+                                <div id="text-transcripcio" class="bg-gray-50 dark:bg-gray-700 p-3 rounded text-gray-800 dark:text-gray-200 text-sm"></div>
                             </div>
                             <div>
                                 <h4 class="text-md font-semibold mb-2 text-gray-700 dark:text-gray-300"

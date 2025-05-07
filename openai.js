@@ -1,4 +1,4 @@
-import { traduccionsLabels } from './utils.js';
+import { traduccionsLabels, traduirInterficie } from './utils.js';
 
 // Classe per gestionar l'API d'OpenAI
 export class GestorOpenAI {
@@ -96,11 +96,16 @@ export class GestorOpenAI {
 
     }
 
-    async transcriureAudio(audioBlob) {
+    async transcriureAudio(audioBlob, idioma='') {
         const formData = new FormData();
         formData.append('file', audioBlob, 'audio.webm');
         formData.append('model', 'whisper-1');
         formData.append('response_format', 'text');
+        if (idioma) {
+            formData.append('language', idioma); 
+            // idioma = 'catalan' || 'spanish' || 'english' || 'french' || 'german' || 'italian' || 'portuguese' 
+            // || 'dutch' || 'russian' || 'japanese' || 'chinese'
+        }
 
         const response = await fetch('https://api.openai.com/v1/audio/transcriptions', {
             method: 'POST',
@@ -324,4 +329,149 @@ export class GestorOpenAI {
             throw error;
         }
     }
+
+    async conteVeu(blob) {
+        console.log("Soc a conteVeu")
+        
+        const context = new AudioContext();
+        const arrayBuffer = await blob.arrayBuffer();
+        const audioBuffer = await context.decodeAudioData(arrayBuffer);
+      
+        const canal = audioBuffer.getChannelData(0); // primer canal d'àudio
+        const umbral = 0.01; // sensibilitat (pot ajustar-se)
+        let energia = 0;
+      
+        for (let i = 0; i < canal.length; i++) {
+          energia += Math.abs(canal[i]);
+        }
+      
+        const mitjana = energia / canal.length;
+        
+        console.log("🚀 ~ conteVeu ~ mitjana:", mitjana)
+        context.close();
+      
+        return mitjana > umbral;
+    }
+
+    async processarOrdreDeVeu(blobAudio) {
+        console.log("processarOrdreDeVeu", blobAudio);
+        // const apiKey = localStorage.getItem("openai_api_key");
+        // if (!apiKey) return alert("Cal configurar la clau API.");
+
+        // Verifica que hi ha una clau API configurada
+        if (!this.apiKey) {
+            throw new Error(traduccionsLabels('avis_falta_clau_api'));
+        }
+        const apiKey = this.apiKey;
+
+        // if (!this.conteVeu(blobAudio)) {
+        //     alert(traduccionsLabels('avis_veu_baixa'));
+        //     return;
+        // }
+
+        // const formData = new FormData();
+        // formData.append("file", blobAudio, "ordre.webm");
+        // formData.append("model", "whisper-1");
+
+        // const transcripcio = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+        //     method: "POST",
+        //     headers: { Authorization: `Bearer ${apiKey}` },
+        //     body: formData
+        // }).then(r => r.json()).then(d => d.text).catch(e => null);
+
+        const idiomaSeleccionat = localStorage.getItem("idioma-interficie") || 'ca'; // català per defecte
+        //formData.append("language", idiomaSeleccionat);
+
+        //const transcripcio = this.transcriureAudio(audioBlob)
+        const transcripcio = await this.transcriureAudio(blobAudio, idiomaSeleccionat);
+
+        console.log("🚀 ~ processarOrdreDeVeu ~ transcripcio:", transcripcio)
+
+        if (!transcripcio) return alert("Error en la transcripció");
+
+        const resposta = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "o4-mini", // "gpt-3.5-turbo",
+                messages: [
+                    {
+                    role: "system",
+                    content: 
+`Ets un intèrpret d’ordres de veu. Rep una frase parlada i respon amb una acció concreta, sense explicar res.
+
+Només has de retornar una d’aquestes accions:
+- text
+- imatge
+- microfon
+- configuracio
+- tema:fosc
+- tema:clar
+- idioma:XX (on XX és un codi ISO com ca, en, es, fr)
+- error:ordre (si no s’entén cap acció)
+
+Exemples d’interpretació:
+- “canvia a català”, “activa català”, “català” → idioma:ca
+- “canviar a mode imatge”, “activa mode imatge”, “mode imatge”, “càmera” → imatge
+- “text” o “mode text” → text
+- “microfon”, “activa el micro” → microfon
+- “obre configuració”, “activa configuració” → configuracio
+- “tema fosc”, “mode fosc” → tema:fosc
+- “tema clar”, “clar”, “activa mode clar” → tema:clar
+
+Retorna només una paraula clau, sense afegir cap explicació ni frase.
+
+Si reps una frase que no pots classificar, retorna exactament: error:ordre`
+                    // "You are a voice command interpreter. Respond with an action: text, image, microphone, settings, dark_theme, light_theme, language:ca, language:en, etc., for example if the user says 'change to Catalan' or 'activate Catalan', just say 'language:ca'. You can also say 'switch to image mode' or 'activate image mode', and just say 'image'. Don't add anything else. If you don't understand the command, say 'Error interpreting the command'."
+                    },
+                    { role: "user", content: transcripcio }
+                ]
+            })
+        }).then(r => r.json()).then(d => d.choices[0].message.content.trim()).catch(e => null);
+        
+        console.log("🚀 ~ processarOrdreDeVeu ~ resposta:", resposta)
+        if (!resposta) return alert("Error interpretant l'ordre");
+
+        if (resposta.startsWith("idioma:")) {
+            const idioma = resposta.split(":" )[1];
+            console.log("🚀 ~ processarOrdreDeVeu ~ idioma:", idioma)
+            // document.getElementById("idioma-interficie").value = idioma;
+            // document.getElementById("idioma-interficie").dispatchEvent(new Event("change"));
+            // document.getElementById("idioma-interficie").value = btn.dataset.lang;
+            // menuIdiomes.classList.add("hidden");
+            traduirInterficie(idioma);
+        } else if (resposta.startsWith("error:")) {
+            const error = resposta.split(":")[1].trim();
+            if (error === "ordre") {
+                alert(traduccionsLabels('avis_ordre_no_reconeguda') + ' ' + transcripcio);	
+            } else {
+                alert(traduccionsLabels('avis_error_ordre') + error);
+            }
+        } else if (resposta.startsWith("tema:")) {
+            const tema = resposta.split(":" )[1];
+            if (tema === "fosc") {
+                document.documentElement.classList.add("dark");
+            } else if (tema === "clar") {
+                document.documentElement.classList.remove("dark");
+            }
+        } else if (resposta.startsWith("_configuracio")) {
+            const accioConfig = resposta.split(":" )[1];
+            if (accioConfig === "obre") {
+                document.getElementById("modal-configuracio")?.classList.remove("hidden");
+            }
+        } else if (resposta === "text" || resposta === "imatge" || resposta === "microfon") {
+            //if (typeof estatApp !== 'undefined') estatApp.setMode(resposta);
+            window.app.canviarMode(resposta)
+        } else if (resposta === "configuracio") {
+            document.getElementById("modal-configuracio")?.classList.remove("hidden");
+        } 
+        // else {
+        //     alert(traduccionsLabels('avis_ordre_no_reconeguda') + ' ' + transcripcio);	
+        // }
+        
+    }
+        
 }

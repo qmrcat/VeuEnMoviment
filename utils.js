@@ -1,3 +1,4 @@
+
 // Funció per ordenar un array d'objectes per una columna (alfabèticament)
 export function ordenarIdiomesPerColumna(array, columna) {
     return [...array].sort((a, b) => {
@@ -141,11 +142,16 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
             'avis_us_microfon_6': '\n\nEl micròfon està sent utilitzat per una altra aplicació.',
             'aturar_gravacio': 'Aturar gravació',
             'començar_gravacio': 'Començar gravació',   
-
             'camera': 'Usar càmera',
             'capturar': 'Capturar',
             'extreure_traduir': 'Extreure i traduir text',
             'descarregar_imatge': 'Descarregar imatge',
+
+            'premut_donar_ordre': 'premut per donar una ordre',
+            'imatge_baixada_ok': 'Imatge descarregada correctament',
+            'imatge_baixada_ko': 'Hi ha hagut un error en descarregar la imatge',
+            'avis_ordre_no_reconeguda': 'Ordre no reconeguda.',
+            'avis_error_ordre': "Error en processar l'ordre: ",
         },
         'en': {
             'config_api': 'API Configuration',
@@ -238,7 +244,8 @@ export function obtenirTraduccioIdioma(idioma='ca', clau=null) {
             'camera': 'Use camera',
             'capturar': 'Capture',
             'extreure_traduir': 'Extract and translate text',
-             'descarregar_imatge': 'Download image',
+            'descarregar_imatge': 'Download image',
+            'avis_veu_baixa': 'El volum de la veu del micròfon és baix o no hi ha cap veu audible.',
    
         },
         'fr': {
@@ -482,4 +489,47 @@ export function traduccionsLabels(clau){
 // Funció per obtenir l'idioma actual de la interfície
 export function obtenirIdiomaInterficie() {
     return localStorage.getItem('idioma-interficie') || 'ca';
+}
+
+// Afegir un mètode per mostrar un missatge flotant temporal
+export function mostrarMissatgeFlotant(missatge, tipus = 'exit', durada = 3000) {
+    // Crear l'element del missatge
+    const missatgeElement = document.createElement('div');
+    const classe = tipus === 'exit' ? 'bg-green-500' : 'bg-red-500';
+    
+    missatgeElement.className = `fixed bottom-4 right-4 ${classe} text-white px-4 py-2 rounded-md shadow-lg transform transition-transform duration-300 flex items-center z-50`;
+    
+    // Afegir icona segons el tipus
+    let icona = '';
+    if (tipus === 'exit') {
+        icona = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>
+        `;
+    } else {
+        icona = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>
+        `;
+    }
+    
+    missatgeElement.innerHTML = `${icona} ${missatge}`;
+    
+    // Afegir l'element al DOM
+    document.body.appendChild(missatgeElement);
+    
+    // Aplicar animació d'entrada
+    setTimeout(() => {
+        missatgeElement.classList.add('translate-y-0');
+    }, 10);
+    
+    // Eliminar després de la durada especificada
+    setTimeout(() => {
+        missatgeElement.classList.add('translate-y-full', 'opacity-0');
+        setTimeout(() => {
+            document.body.removeChild(missatgeElement);
+        }, 300);
+    }, durada);
 }

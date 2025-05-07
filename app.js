@@ -1,7 +1,7 @@
 
 import { idiomesJSON } from './idiomes.js';
 import { AplicacioTraductor } from './traductor.js';
-import { omplirSelectsIdiomes } from './utils.js';
+import { omplirSelectsIdiomes, traduirInterficie } from './utils.js';
 
 
 // Iniciar l'aplicació
@@ -26,7 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aplicar tema inicial
     const savedTheme = localStorage.getItem('tema') || 'clar';
 
+    // Gravació d'ordre de veu (estil WhatsApp)
+    let mediaRecorder;
+    let chunks = [];
 
+    const botoVeu = document.getElementById("boto-veu-control");
                 
     if (savedTheme === 'fosc') {
         document.documentElement.classList.add('dark');
@@ -55,10 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
     
     menuIdiomes.querySelectorAll("button").forEach(btn => {
         btn.addEventListener("click", () => {
-        document.getElementById("idioma-interficie").value = btn.dataset.lang;
-        menuIdiomes.classList.add("hidden");
+            //document.getElementById("idioma-interficie").value = btn.dataset.lang;
+            traduirInterficie(btn.dataset.lang)
+            menuIdiomes.classList.add("hidden");
         });
     });
+
 
     window.app = new AplicacioTraductor();
 });

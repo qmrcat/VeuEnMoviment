@@ -1,6 +1,6 @@
 import { GestorAudio } from './audio.js';
 import { GestorOpenAI } from './openai.js';
-import { traduccionsLabels } from './utils.js';
+import { traduccionsLabels, mostrarMissatgeFlotant } from './utils.js';
 
 
 // Classe principal de l'aplicació
@@ -19,6 +19,10 @@ export class AplicacioTraductor {
         this.ultimAudioTraduit = null;
 
         this.ultimTraduccioImatge = null;
+
+          // Gravació d'ordre de veu (estil WhatsApp)
+        this.mediaRecorder;
+        this.chunks = [];
 
         // Comprovar si és la primera visita
         this.primeraVisita = localStorage.getItem('primera-visita') === null;
@@ -146,6 +150,9 @@ export class AplicacioTraductor {
         const tancaModal = document.getElementById('tanca-modal');
         const tancaConfig = document.getElementById('tanca-configuracio');
         const configuraApi = document.getElementById('configura-api');
+
+        const botoVeu = document.getElementById("boto-veu-control");
+        const indicadorVeu = document.getElementById("indicador-veu");
         
         botoConfig.addEventListener('click', () => {
             this.gestorOpenAI.getUsApiKeyFacturacio()
@@ -153,11 +160,13 @@ export class AplicacioTraductor {
         });
         
         tancaModal.addEventListener('click', () => {
-            modalConfig.classList.add('hidden');
+            // modalConfig.classList.add('hidden');
+            this.tancaModalConfiguracio()
         });
         
         tancaConfig.addEventListener('click', () => {
-            modalConfig.classList.add('hidden');
+            // modalConfig.classList.add('hidden');
+            this.tancaModalConfiguracio()
         });
         
         // configuraApi.addEventListener('click', () => {
@@ -186,16 +195,58 @@ export class AplicacioTraductor {
         veuOriginalSelect.value = this.gestorOpenAI.getVeuOriginal();
         veuTraduida.value = this.gestorOpenAI.getVeuTraduida();
 
+        botoVeu.addEventListener("mousedown", async () => {
+            botoVeu.classList.remove("bg-blue-600", "hover:bg-blue-700");
+            botoVeu.classList.add("bg-red-600");
+            indicadorVeu.classList.remove("hidden");
+
+            console.log("Iniciant gravació d'àudio...");
+
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            this.mediaRecorder = new MediaRecorder(stream);
+            this.chunks = [];
+        
+            this.mediaRecorder.ondataavailable = (e) => {
+                if (e.data.size > 0) this.chunks.push(e.data);
+            };
+        
+            this.mediaRecorder.onstop = async () => {
+                console.log("Gravació d'àudio aturada.");
+                botoVeu.classList.remove("bg-red-600");
+                botoVeu.classList.add("bg-blue-600", "hover:bg-blue-700");
+                indicadorVeu.classList.add("hidden");
+
+                const blob = new Blob(this.chunks, { type: 'audio/webm' });
+                // const veu = await conteVeu(blob);
+                // if (!veu) {
+                //   alert("No s'ha detectat veu a l'àudio.");
+                //   return;
+                // }                
+                await this.gestorOpenAI.processarOrdreDeVeu(blob);
+            };
+        
+            this.mediaRecorder.start();
+        });
+        
+
+        botoVeu.addEventListener("mouseup", () => {
+            console.log("Aturant gravació d'àudio...");
+            if (this.mediaRecorder && this.mediaRecorder.state === "recording") {
+                this.mediaRecorder.stop();
+            }
+        });
+
         
         formApi.addEventListener('submit', (e) => {
             e.preventDefault();
-            this.gestorOpenAI.setApiKey(apiKeyInput.value);
-            this.gestorOpenAI.setVeuOriginal(veuOriginalSelect.value);
-            this.gestorOpenAI.setVeuTraduida(veuTraduida.value);
-            this.gestorOpenAI.setIdiomaOriginal(idiomaOriginalDef.value);
-            this.gestorOpenAI.setIdiomaTraduccio(idiomaTraduccioDef.value);
-            modalConfig.classList.add('hidden');
-            this.comprovarConfiguracio();
+            this.desarConfiguracio()
+            // this.gestorOpenAI.setApiKey(apiKeyInput.value);
+            // this.gestorOpenAI.setVeuOriginal(veuOriginalSelect.value);
+            // this.gestorOpenAI.setVeuTraduida(veuTraduida.value);
+            // this.gestorOpenAI.setIdiomaOriginal(idiomaOriginalDef.value);
+            // this.gestorOpenAI.setIdiomaTraduccio(idiomaTraduccioDef.value);
+            // modalConfig.classList.add('hidden');
+            // this.comprovarConfiguracio();
         });
         
         mostrarApiKey.addEventListener('change', (e) => {
@@ -210,6 +261,20 @@ export class AplicacioTraductor {
         estatTraduccio.classList.add('hidden');
     }
     
+    desarConfiguracio() {
+        this.gestorOpenAI.setApiKey(apiKeyInput.value);
+        this.gestorOpenAI.setVeuOriginal(veuOriginalSelect.value);
+        this.gestorOpenAI.setVeuTraduida(veuTraduida.value);
+        this.gestorOpenAI.setIdiomaOriginal(idiomaOriginalDef.value);
+        this.gestorOpenAI.setIdiomaTraduccio(idiomaTraduccioDef.value);
+         this.tancaModalConfiguracio()
+        this.comprovarConfiguracio();
+    }
+
+    tancaModalConfiguracio() {
+        modalConfig.classList.add('hidden');
+    }
+
     mostrarModalConfiguracio() {
         const modalConfig = document.getElementById('modal-configuracio');
         modalConfig.classList.remove('hidden');
@@ -1191,56 +1256,56 @@ descarregarImatge(src) {
         setTimeout(() => {
             document.body.removeChild(a);
             // Mostrar un missatge de confirmació
-            this.mostrarMissatgeFlotant('Imatge descarregada correctament');
+            mostrarMissatgeFlotant(traduccionsLabels('imatge_baixada_ok')); // 
         }, 100);
     } catch (error) {
         console.error('Error en descarregar la imatge:', error);
-        alert('Hi ha hagut un error en descarregar la imatge');
+        alert(traduccionsLabels('imatge_baixada_ko'));
     }
 }
 
-// Afegir un mètode per mostrar un missatge flotant temporal
-mostrarMissatgeFlotant(missatge, tipus = 'exit', durada = 3000) {
-    // Crear l'element del missatge
-    const missatgeElement = document.createElement('div');
-    const classe = tipus === 'exit' ? 'bg-green-500' : 'bg-red-500';
+// // Afegir un mètode per mostrar un missatge flotant temporal
+// __mostrarMissatgeFlotant(missatge, tipus = 'exit', durada = 3000) {
+//     // Crear l'element del missatge
+//     const missatgeElement = document.createElement('div');
+//     const classe = tipus === 'exit' ? 'bg-green-500' : 'bg-red-500';
     
-    missatgeElement.className = `fixed bottom-4 right-4 ${classe} text-white px-4 py-2 rounded-md shadow-lg transform transition-transform duration-300 flex items-center z-50`;
+//     missatgeElement.className = `fixed bottom-4 right-4 ${classe} text-white px-4 py-2 rounded-md shadow-lg transform transition-transform duration-300 flex items-center z-50`;
     
-    // Afegir icona segons el tipus
-    let icona = '';
-    if (tipus === 'exit') {
-        icona = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-        `;
-    } else {
-        icona = `
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>
-        `;
-    }
+//     // Afegir icona segons el tipus
+//     let icona = '';
+//     if (tipus === 'exit') {
+//         icona = `
+//             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+//                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+//             </svg>
+//         `;
+//     } else {
+//         icona = `
+//             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+//                 <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+//             </svg>
+//         `;
+//     }
     
-    missatgeElement.innerHTML = `${icona} ${missatge}`;
+//     missatgeElement.innerHTML = `${icona} ${missatge}`;
     
-    // Afegir l'element al DOM
-    document.body.appendChild(missatgeElement);
+//     // Afegir l'element al DOM
+//     document.body.appendChild(missatgeElement);
     
-    // Aplicar animació d'entrada
-    setTimeout(() => {
-        missatgeElement.classList.add('translate-y-0');
-    }, 10);
+//     // Aplicar animació d'entrada
+//     setTimeout(() => {
+//         missatgeElement.classList.add('translate-y-0');
+//     }, 10);
     
-    // Eliminar després de la durada especificada
-    setTimeout(() => {
-        missatgeElement.classList.add('translate-y-full', 'opacity-0');
-        setTimeout(() => {
-            document.body.removeChild(missatgeElement);
-        }, 300);
-    }, durada);
-}
+//     // Eliminar després de la durada especificada
+//     setTimeout(() => {
+//         missatgeElement.classList.add('translate-y-full', 'opacity-0');
+//         setTimeout(() => {
+//             document.body.removeChild(missatgeElement);
+//         }, 300);
+//     }, durada);
+// }
 
 
     async processarImatge(imatgeBase64) {
