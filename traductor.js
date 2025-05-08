@@ -2,7 +2,7 @@ import { GestorAudio } from './audio.js';
 import { GestorOpenAI } from './openai.js';
 import { traduccionsLabels, mostrarMissatgeFlotant } from './utils.js';
 
-const DURADA_MINIMA_MS = 2000; // 3 segons (configurable)
+const DURADA_MINIMA_MS = 1500; // 1,5 segons (configurable)
 
 
 // Classe principal de l'aplicació
@@ -28,6 +28,14 @@ export class AplicacioTraductor {
         this.iniciTemps = 0;
         this.intervalTemps;
 
+        // Variable per emmagatzemar les dades de la imatge
+        this.imatgeActual = null;
+        // Stream de la càmera
+        this.streamCamera = null;
+
+        this.seccioCamera = document.getElementById('seccio-camera');
+        this.botoCamera = document.getElementById('boto-camera');
+        this.dropZone = document.querySelector('label[for="entrada-imatge"]'); // Zona on arrossegar
 
         // Comprovar si és la primera visita
         this.primeraVisita = localStorage.getItem('primera-visita') === null;
@@ -294,12 +302,18 @@ export class AplicacioTraductor {
     }
     
     desarConfiguracio() {
+        const apiKeyInput = document.getElementById('api-key');
+        const veuOriginalSelect = document.getElementById('veu-original');
+        const veuTraduida = document.getElementById('veu-traduida');
+        const idiomaOriginalDef = document.getElementById('idioma-original');
+        const idiomaTraduccioDef = document.getElementById('idioma-traduccio');
+
         this.gestorOpenAI.setApiKey(apiKeyInput.value);
         this.gestorOpenAI.setVeuOriginal(veuOriginalSelect.value);
         this.gestorOpenAI.setVeuTraduida(veuTraduida.value);
         this.gestorOpenAI.setIdiomaOriginal(idiomaOriginalDef.value);
         this.gestorOpenAI.setIdiomaTraduccio(idiomaTraduccioDef.value);
-         this.tancaModalConfiguracio()
+        this.tancaModalConfiguracio()
         this.comprovarConfiguracio();
     }
 
@@ -822,7 +836,7 @@ export class AplicacioTraductor {
     // Mètode configurarGestioImatges revisat per utilitzar la classe zona-imatge i millorar els efectes visuals
     configurarGestioImatges() {
         const entradaImatge = document.getElementById('entrada-imatge');
-        const dropZone = document.querySelector('label[for="entrada-imatge"]'); // Zona on arrossegar
+        // const dropZone = document.querySelector('label[for="entrada-imatge"]'); // Zona on arrossegar
         const previsualitzacioImatge = document.getElementById('previsualitzacio-imatge');
         const imatgePujada = document.getElementById('imatge-pujada');
         const eliminarImatge = document.getElementById('eliminar-imatge');
@@ -831,68 +845,70 @@ export class AplicacioTraductor {
         const resultatsImatge = document.getElementById('resultats-imatge');
 
         // Nou: Gestió de la càmera
-        const botoCamera = document.getElementById('boto-camera');
-        const seccioCamera = document.getElementById('seccio-camera');
+        // const botoCamera = document.getElementById('boto-camera');
+        // const seccioCamera = document.getElementById('seccio-camera');
+        
         const videoCamera = document.getElementById('video-camera');
         const capturarImatge = document.getElementById('capturar-imatge');
         const tancarCamera = document.getElementById('tancar-camera');
         const canvasCamera = document.getElementById('canvas-camera');
             
-        // Variable per emmagatzemar les dades de la imatge
+        // // Variable per emmagatzemar les dades de la imatge
         this.imatgeActual = null;
 
-        // Stream de la càmera
-        let streamCamera = null;
+        // // Stream de la càmera
+        this.streamCamera = null;
 
     // Nou: Event listener per al botó de càmera
-    botoCamera.addEventListener('click', async () => {
-        try {
-            // Comprovar si el navegador suporta getUserMedia
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                alert('El teu navegador no suporta l\'accés a la càmera. Prova amb Chrome, Firefox o Safari.');
-                return;
-            }
+    this.botoCamera.addEventListener('click', async () => {
+        this.activarCamera()
+        // try {
+        //     // Comprovar si el navegador suporta getUserMedia
+        //     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        //         alert('El teu navegador no suporta l\'accés a la càmera. Prova amb Chrome, Firefox o Safari.');
+        //         return;
+        //     }
             
-            // Obtenir accés a la càmera
-            this.streamCamera = await navigator.mediaDevices.getUserMedia({ 
-                video: {
-                    facingMode: 'environment', // Prefereix la càmera posterior en mòbils
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                } 
-            });
+        //     // Obtenir accés a la càmera
+        //     this.streamCamera = await navigator.mediaDevices.getUserMedia({ 
+        //         video: {
+        //             facingMode: 'environment', // Prefereix la càmera posterior en mòbils
+        //             width: { ideal: 1280 },
+        //             height: { ideal: 720 }
+        //         } 
+        //     });
             
-            // Assignar el stream al vídeo
-            videoCamera.srcObject = this.streamCamera;
+        //     // Assignar el stream al vídeo
+        //     videoCamera.srcObject = this.streamCamera;
             
-            // Mostrar la secció de la càmera
-            seccioCamera.classList.remove('hidden');
-            botoCamera.classList.add('hidden');
-            dropZone.classList.add('hidden');
+        //     // Mostrar la secció de la càmera
+        //     seccioCamera.classList.remove('hidden');
+        //     botoCamera.classList.add('hidden');
+        //     dropZone.classList.add('hidden');
             
-            // Registrar l'esdeveniment per saber quan la càmera s'ha carregat
-            videoCamera.addEventListener('loadedmetadata', () => {
-                console.log('Càmera carregada, dimensions:', videoCamera.videoWidth, 'x', videoCamera.videoHeight);
-            });
+        //     // Registrar l'esdeveniment per saber quan la càmera s'ha carregat
+        //     videoCamera.addEventListener('loadedmetadata', () => {
+        //         console.log('Càmera carregada, dimensions:', videoCamera.videoWidth, 'x', videoCamera.videoHeight);
+        //     });
             
-        } catch (error) {
-            console.error('Error en accedir a la càmera:', error);
+        // } catch (error) {
+        //     console.error('Error en accedir a la càmera:', error);
             
-            let missatgeError = 'No s\'ha pogut accedir a la càmera.';
+        //     let missatgeError = 'No s\'ha pogut accedir a la càmera.';
             
-            if (error.name === 'NotAllowedError') {
-                missatgeError += '\n\nHas denegat el permís a la càmera. Per activar-la:\n' +
-                                '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
-                                '2. Canvia el permís de la càmera a "Permet"\n' +
-                                '3. Recarrega la pàgina';
-            } else if (error.name === 'NotFoundError') {
-                missatgeError += '\n\nNo s\'ha trobat cap càmera. Assegura\'t que en tens una connectada.';
-            } else if (error.name === 'NotReadableError') {
-                missatgeError += '\n\nLa càmera està sent utilitzada per una altra aplicació.';
-            }
+        //     if (error.name === 'NotAllowedError') {
+        //         missatgeError += '\n\nHas denegat el permís a la càmera. Per activar-la:\n' +
+        //                         '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
+        //                         '2. Canvia el permís de la càmera a "Permet"\n' +
+        //                         '3. Recarrega la pàgina';
+        //     } else if (error.name === 'NotFoundError') {
+        //         missatgeError += '\n\nNo s\'ha trobat cap càmera. Assegura\'t que en tens una connectada.';
+        //     } else if (error.name === 'NotReadableError') {
+        //         missatgeError += '\n\nLa càmera està sent utilitzada per una altra aplicació.';
+        //     }
             
-            alert(missatgeError);
-        }
+        //     alert(missatgeError);
+        // }
     });
     
     // Nou: Event listener per capturar la imatge
@@ -972,7 +988,7 @@ export class AplicacioTraductor {
         
         // Prevenir el comportament per defecte de l'arrossegament
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, preventDefaults, false);
+            this.dropZone.addEventListener(eventName, preventDefaults, false);
         });
         
         function preventDefaults(e) {
@@ -982,23 +998,23 @@ export class AplicacioTraductor {
         
         // Afegir classes d'estil quan s'arrossega sobre la zona
         ['dragenter', 'dragover'].forEach(eventName => {
-            dropZone.addEventListener(eventName, highlight, false);
+            this.dropZone.addEventListener(eventName, highlight, false);
         });
         
         ['dragleave', 'drop'].forEach(eventName => {
-            dropZone.addEventListener(eventName, unhighlight, false);
+            this.dropZone.addEventListener(eventName, unhighlight, false);
         });
         
         function highlight() {
-            dropZone.classList.add('drag-active');
+            this.dropZone.classList.add('drag-active');
         }
         
         function unhighlight() {
-            dropZone.classList.remove('drag-active');
+            this.dropZone.classList.remove('drag-active');
         }
         
         // Gestionar quan es deixa anar un fitxer
-        dropZone.addEventListener('drop', (e) => {
+        this.dropZone.addEventListener('drop', (e) => {
             const dt = e.dataTransfer;
             const fitxer = dt.files[0];
             if (fitxer) {
@@ -1025,7 +1041,60 @@ export class AplicacioTraductor {
         });
     }            
 
+    async activarCamera(){
+        const videoCamera = document.getElementById('video-camera');
+        // const seccioCamera = document.getElementById('seccio-camera');
+        // const botoCamera = document.getElementById('boto-camera');
+        // const dropZone = document.querySelector('label[for="entrada-imatge"]'); // Zona on arrossegar
 
+        try {
+            // Comprovar si el navegador suporta getUserMedia
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('El teu navegador no suporta l\'accés a la càmera. Prova amb Chrome, Firefox o Safari.');
+                return;
+            }
+            
+            // Obtenir accés a la càmera
+            this.streamCamera = await navigator.mediaDevices.getUserMedia({ 
+                video: {
+                    facingMode: 'environment', // Prefereix la càmera posterior en mòbils
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                } 
+            });
+            
+            // Assignar el stream al vídeo
+            videoCamera.srcObject = this.streamCamera;
+            
+            // Mostrar la secció de la càmera
+            this.seccioCamera.classList.remove('hidden');
+            this.botoCamera.classList.add('hidden');
+            this.dropZone.classList.add('hidden');
+            
+            // Registrar l'esdeveniment per saber quan la càmera s'ha carregat
+            videoCamera.addEventListener('loadedmetadata', () => {
+                console.log('Càmera carregada, dimensions:', videoCamera.videoWidth, 'x', videoCamera.videoHeight);
+            });
+            
+        } catch (error) {
+            console.error('Error en accedir a la càmera:', error);
+            
+            let missatgeError = 'No s\'ha pogut accedir a la càmera.';
+            
+            if (error.name === 'NotAllowedError') {
+                missatgeError += '\n\nHas denegat el permís a la càmera. Per activar-la:\n' +
+                                '1. Fes clic a la icona del cadenat a la barra d\'adreces\n' +
+                                '2. Canvia el permís de la càmera a "Permet"\n' +
+                                '3. Recarrega la pàgina';
+            } else if (error.name === 'NotFoundError') {
+                missatgeError += '\n\nNo s\'ha trobat cap càmera. Assegura\'t que en tens una connectada.';
+            } else if (error.name === 'NotReadableError') {
+                missatgeError += '\n\nLa càmera està sent utilitzada per una altra aplicació.';
+            }
+            
+            alert(missatgeError);
+        }
+    }
 
     // Afegir aquest nou mètode a la classe AplicacioTraductor
     tancarStreamCamera() {
@@ -1039,9 +1108,9 @@ export class AplicacioTraductor {
 
     tancarCamera() {
         this.tancarStreamCamera();
-        seccioCamera.classList.add('hidden');
-        botoCamera.classList.remove('hidden');
-        dropZone.classList.remove('hidden');
+        this.seccioCamera.classList.add('hidden');
+        this.botoCamera.classList.remove('hidden');
+        this.dropZone.classList.remove('hidden');
     }
 
     // Nou mètode per processar un fitxer d'imatge (reutilitzat tant per l'input com pel drag & drop)

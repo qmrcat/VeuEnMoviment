@@ -464,7 +464,7 @@ Si reps una frase que no pots classificar, retorna exactament: error:ordre
                 document.getElementById("modal-configuracio")?.classList.add("hidden");
             } else if (accioConfig === "desar") {
                 // Reset de la configuració
-                localStorage.removeItem('openai-api-key');
+                window.app.desarConfiguracio()
             }
         } else if (resposta.startsWith("mode")) {
             const modeAccio = resposta.split(":" )[1];
