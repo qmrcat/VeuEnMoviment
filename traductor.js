@@ -2,6 +2,8 @@ import { GestorAudio } from './audio.js';
 import { GestorOpenAI } from './openai.js';
 import { traduccionsLabels, mostrarMissatgeFlotant } from './utils.js';
 
+const DURADA_MINIMA_MS = 2000; // 3 segons (configurable)
+
 
 // Classe principal de l'aplicació
 export class AplicacioTraductor {
@@ -9,7 +11,7 @@ export class AplicacioTraductor {
         this.gestorAudio = new GestorAudio();
         this.gestorOpenAI = new GestorOpenAI();
         
-        
+        this.modalConfig = document.getElementById('modal-configuracio');
         // Variables per emmagatzemar la transcripció i traducció
         this.ultimaTranscripcio = '';
         this.ultimaTraduccio = '';
@@ -23,6 +25,9 @@ export class AplicacioTraductor {
           // Gravació d'ordre de veu (estil WhatsApp)
         this.mediaRecorder;
         this.chunks = [];
+        this.iniciTemps = 0;
+        this.intervalTemps;
+
 
         // Comprovar si és la primera visita
         this.primeraVisita = localStorage.getItem('primera-visita') === null;
@@ -63,6 +68,13 @@ export class AplicacioTraductor {
         // Configurar selector d'idioma
         this.configurarSelectorIdioma();
 
+    }
+
+    formatTemps(ms) {
+        const totalSec = Math.floor(ms / 1000);
+        const min = String(Math.floor(totalSec / 60)).padStart(2, '0');
+        const sec = String(totalSec % 60).padStart(2, '0');
+        return `${min}:${sec}`;
     }
     
     // Afegir aquest nou mètode a la classe AplicacioTraductor
@@ -146,13 +158,14 @@ export class AplicacioTraductor {
     configUiElements() {
         // Botó de configuració
         const botoConfig = document.getElementById('boto-configuracio');
-        const modalConfig = document.getElementById('modal-configuracio');
+        //const modalConfig = document.getElementById('modal-configuracio');
         const tancaModal = document.getElementById('tanca-modal');
         const tancaConfig = document.getElementById('tanca-configuracio');
         const configuraApi = document.getElementById('configura-api');
 
         const botoVeu = document.getElementById("boto-veu-control");
         const indicadorVeu = document.getElementById("indicador-veu");
+        const temporitzadorVeu = document.getElementById("temporitzador-veu");
         
         botoConfig.addEventListener('click', () => {
             this.gestorOpenAI.getUsApiKeyFacturacio()
@@ -199,12 +212,22 @@ export class AplicacioTraductor {
             botoVeu.classList.remove("bg-blue-600", "hover:bg-blue-700");
             botoVeu.classList.add("bg-red-600");
             indicadorVeu.classList.remove("hidden");
+            temporitzadorVeu.classList.remove("hidden");
+            temporitzadorVeu.textContent = "00:00";
 
             console.log("Iniciant gravació d'àudio...");
 
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             this.mediaRecorder = new MediaRecorder(stream);
             this.chunks = [];
+
+            this.iniciTemps = Date.now();
+
+            this.intervalTemps = setInterval(() => {
+                const ara = Date.now();
+                const ms = ara - this.iniciTemps;
+                temporitzadorVeu.textContent = this.formatTemps(ms);
+            }, 200);
         
             this.mediaRecorder.ondataavailable = (e) => {
                 if (e.data.size > 0) this.chunks.push(e.data);
@@ -215,6 +238,15 @@ export class AplicacioTraductor {
                 botoVeu.classList.remove("bg-red-600");
                 botoVeu.classList.add("bg-blue-600", "hover:bg-blue-700");
                 indicadorVeu.classList.add("hidden");
+                temporitzadorVeu.classList.add("hidden");
+
+
+                const durada = Date.now() - this.iniciTemps;
+                if (durada < DURADA_MINIMA_MS) {
+                    const segonsMinim = Math.floor(DURADA_MINIMA_MS / 1000);
+                    alert(`L'àudio és massa curt. Mantén premut el botó almenys ${segonsMinim} segons.`);
+                    return;
+                }
 
                 const blob = new Blob(this.chunks, { type: 'audio/webm' });
                 // const veu = await conteVeu(blob);
@@ -272,12 +304,13 @@ export class AplicacioTraductor {
     }
 
     tancaModalConfiguracio() {
-        modalConfig.classList.add('hidden');
+        // const modalConfig = document.getElementById('modal-configuracio');
+        this.modalConfig.classList.add('hidden');
     }
 
     mostrarModalConfiguracio() {
-        const modalConfig = document.getElementById('modal-configuracio');
-        modalConfig.classList.remove('hidden');
+        // const modalConfig = document.getElementById('modal-configuracio');
+        this.modalConfig.classList.remove('hidden');
 
     }
 
@@ -642,6 +675,7 @@ export class AplicacioTraductor {
         const contingutMicrofon = document.getElementById('contingut-microfon');
         const contingutText = document.getElementById('contingut-text');
         const contingutImatge = document.getElementById('contingut-imatge'); // Nou
+        const botoModeCamera = document.getElementById('boto-camera'); // Nou
 
         
         // if (mode === 'microfon') {
@@ -694,14 +728,19 @@ export class AplicacioTraductor {
             contingutMicrofon.classList.add('hidden');
             contingutText.classList.remove('hidden');
             contingutImatge.classList.add('hidden');
-        } else if (mode === 'imatge') { // Nou
+        } else if (mode === 'imatge'  || mode === 'camera' ) { // Nou
             botoModeImatge.classList.remove('bg-white', 'text-gray-900', 'dark:bg-gray-700');
             botoModeImatge.classList.add('bg-blue-600', 'text-white');
             contingutMicrofon.classList.add('hidden');
             contingutText.classList.add('hidden');
             contingutImatge.classList.remove('hidden');
-        }
+            if (mode === 'camera' ){
+
+            }
+        } 
         
+        // botoModeCamera
+
         // Si estava gravant, aturar la gravació
         if (this.gestorAudio.gravant) {
             this.gestorAudio.aturarGravacio();
@@ -887,10 +926,11 @@ export class AplicacioTraductor {
             }
             
             // Tancar la càmera
-            this.tancarStreamCamera();
-            seccioCamera.classList.add('hidden');
-            botoCamera.classList.remove('hidden');
-            dropZone.classList.remove('hidden');
+            // this.tancarStreamCamera();
+            // seccioCamera.classList.add('hidden');
+            // botoCamera.classList.remove('hidden');
+            // dropZone.classList.remove('hidden');
+            this.tancarCamera()
             
             // Guardar les dades de la imatge en base64
             this.imatgeActual = imatgeDataURL.split(',')[1];
@@ -902,10 +942,11 @@ export class AplicacioTraductor {
     
     // Nou: Event listener per tancar la càmera
     tancarCamera.addEventListener('click', () => {
-        this.tancarStreamCamera();
-        seccioCamera.classList.add('hidden');
-        botoCamera.classList.remove('hidden');
-        dropZone.classList.remove('hidden');
+        // this.tancarStreamCamera();
+        // seccioCamera.classList.add('hidden');
+        // botoCamera.classList.remove('hidden');
+        // dropZone.classList.remove('hidden');
+        this.tancarCamera()
     }); 
 
     // Event listener per al botó de descàrrega d'imatge
@@ -984,6 +1025,8 @@ export class AplicacioTraductor {
         });
     }            
 
+
+
     // Afegir aquest nou mètode a la classe AplicacioTraductor
     tancarStreamCamera() {
         if (this.streamCamera) {
@@ -992,6 +1035,13 @@ export class AplicacioTraductor {
             });
             this.streamCamera = null;
         }
+    }
+
+    tancarCamera() {
+        this.tancarStreamCamera();
+        seccioCamera.classList.add('hidden');
+        botoCamera.classList.remove('hidden');
+        dropZone.classList.remove('hidden');
     }
 
     // Nou mètode per processar un fitxer d'imatge (reutilitzat tant per l'input com pel drag & drop)

@@ -404,27 +404,31 @@ export class GestorOpenAI {
 `Ets un intèrpret d’ordres de veu. Rep una frase parlada i respon amb una acció concreta, sense explicar res.
 
 Només has de retornar una d’aquestes accions:
-- text
-- imatge
-- microfon
-- configuracio
-- tema:fosc
-- tema:clar
+- mode:MM (on MM pot ser: text, imatge, microfon, càmera)
+- configuracio:CC (on CC pot ser: obrir, tancar, desar)
+- tema:TT (on TT pot ser: fosc, clar)
 - idioma:XX (on XX és un codi ISO com ca, en, es, fr)
 - error:ordre (si no s’entén cap acció)
 
 Exemples d’interpretació:
 - “canvia a català”, “activa català”, “català” → idioma:ca
-- “canviar a mode imatge”, “activa mode imatge”, “mode imatge”, “càmera” → imatge
-- “text” o “mode text” → text
-- “microfon”, “activa el micro” → microfon
-- “obre configuració”, “activa configuració” → configuracio
+- “canviar a mode imatge”, “activa mode imatge”, “mode imatge”, “imatge” → mode:imatge
+- “canviar a mode càmara”, “activa mode càmara”, “mode càmara”, “càmera” → mode:camera
+- “tanca càmara”, “amaga càmara”, “càmera fora” → tancar:camera
+- “canviar a mode text”, “text”,  “activa text” o “mode text” → mode:text
+- “canviar a mode microfon”, “microfon”, “activa el micro”, “mode micro” → mode:microfon
+- L'usuria pot dir “micro” o “microfon”, interpreta-ho com microfon
+- “obre configuració”, “activa configuració” → configuracio:obre
+- “tancar configuració”, “desactiva configuració” → configuracio:tancar
+- “desar configuració”, “guardar configuració” → configuracio:desar
+- L'usuari pot dit “tancar config” o “obre config”, “config” interpreta'l com “configuració”
 - “tema fosc”, “mode fosc” → tema:fosc
 - “tema clar”, “clar”, “activa mode clar” → tema:clar
 
 Retorna només una paraula clau, sense afegir cap explicació ni frase.
 
-Si reps una frase que no pots classificar, retorna exactament: error:ordre`
+Si reps una frase que no pots classificar, retorna exactament: error:ordre
+`
                     // "You are a voice command interpreter. Respond with an action: text, image, microphone, settings, dark_theme, light_theme, language:ca, language:en, etc., for example if the user says 'change to Catalan' or 'activate Catalan', just say 'language:ca'. You can also say 'switch to image mode' or 'activate image mode', and just say 'image'. Don't add anything else. If you don't understand the command, say 'Error interpreting the command'."
                     },
                     { role: "user", content: transcripcio }
@@ -432,16 +436,11 @@ Si reps una frase que no pots classificar, retorna exactament: error:ordre`
             })
         }).then(r => r.json()).then(d => d.choices[0].message.content.trim()).catch(e => null);
         
-        console.log("🚀 ~ processarOrdreDeVeu ~ resposta:", resposta)
+        console.log("Resposta:", resposta)
         if (!resposta) return alert("Error interpretant l'ordre");
 
         if (resposta.startsWith("idioma:")) {
             const idioma = resposta.split(":" )[1];
-            console.log("🚀 ~ processarOrdreDeVeu ~ idioma:", idioma)
-            // document.getElementById("idioma-interficie").value = idioma;
-            // document.getElementById("idioma-interficie").dispatchEvent(new Event("change"));
-            // document.getElementById("idioma-interficie").value = btn.dataset.lang;
-            // menuIdiomes.classList.add("hidden");
             traduirInterficie(idioma);
         } else if (resposta.startsWith("error:")) {
             const error = resposta.split(":")[1].trim();
@@ -457,20 +456,31 @@ Si reps una frase que no pots classificar, retorna exactament: error:ordre`
             } else if (tema === "clar") {
                 document.documentElement.classList.remove("dark");
             }
-        } else if (resposta.startsWith("_configuracio")) {
+        } else if (resposta.startsWith("configuracio")) {
             const accioConfig = resposta.split(":" )[1];
             if (accioConfig === "obre") {
                 document.getElementById("modal-configuracio")?.classList.remove("hidden");
+            } else if (accioConfig === "tanca") {
+                document.getElementById("modal-configuracio")?.classList.add("hidden");
+            } else if (accioConfig === "desar") {
+                // Reset de la configuració
+                localStorage.removeItem('openai-api-key');
             }
-        } else if (resposta === "text" || resposta === "imatge" || resposta === "microfon") {
-            //if (typeof estatApp !== 'undefined') estatApp.setMode(resposta);
-            window.app.canviarMode(resposta)
-        } else if (resposta === "configuracio") {
+        } else if (resposta.startsWith("mode")) {
+            const modeAccio = resposta.split(":" )[1];
+            if (modeAccio === "text" || modeAccio === "imatge" || modeAccio === "microfon" || modeAccio === "camera") {
+                window.app.canviarMode(modeAccio)
+            }
+        } else if (resposta.startsWith("tancar")) {  // tancar:camera
+            const accioTancar = resposta.split(":")[1];
+            if (accioTancar === "camera") {
+                window.app.tancarCamera()
+            }
+        } else if (resposta === "__configuracio") {
             document.getElementById("modal-configuracio")?.classList.remove("hidden");
-        } 
-        // else {
-        //     alert(traduccionsLabels('avis_ordre_no_reconeguda') + ' ' + transcripcio);	
-        // }
+        } else {
+            console.log(traduccionsLabels('avis_ordre_no_reconeguda') + ' ' + transcripcio);	
+        }
         
     }
         
