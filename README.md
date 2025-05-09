@@ -2,6 +2,10 @@
 
 ![Logo Veu en Moviment](./imatges/veuenmoviment.png)
 
+## 
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/qmrcat/VeuEnMoviment)
+
 ## 📝 Descripció
 
 **Veu en Moviment** és una aplicació web que permet traduir veu en temps real entre múltiples idiomes. L'aplicació utilitza les APIs d'OpenAI (Whisper, GPT i TTS) per transcriure, traduir i generar àudio de manera eficient i precisa.
