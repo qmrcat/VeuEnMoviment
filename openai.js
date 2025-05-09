@@ -8,6 +8,7 @@ export class GestorOpenAI {
         this.veuTraduida = localStorage.getItem('veu-traduida') || 'nova';
         this.idiomaOriginal = localStorage.getItem('idioma-original') || 'catalan';  // català
         this.idiomaTraduccio = localStorage.getItem('idioma-traduccio') || 'english'; // anglès
+        this.activarOrdresVeu = localStorage.getItem('activar-ordres-veu') || 'true'; // true per defecte
     }
 
     isConfigured() {
@@ -60,6 +61,16 @@ export class GestorOpenAI {
     getIdiomaTraduccio() {
         return this.idiomaTraduccio;
     }
+
+    setActivarOrdresVeu(activarOrdresVeu) {
+        this.activarOrdresVeu = activarOrdresVeu;
+        localStorage.setItem('activar-ordres-veu', activarOrdresVeu);
+    }
+
+    getActivarOrdresVeu() {
+        return this.activarOrdresVeu;
+    }
+
     ///
 
     getUsApiKeyFacturacio() {

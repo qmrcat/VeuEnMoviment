@@ -163,6 +163,19 @@ export class AplicacioTraductor {
         }
     }
     
+    estatVisibilitatBotoVeu(activarOrdresVeu) {
+
+        if (activarOrdresVeu.checked) {
+            // Mostrar el botó de veu
+            const botoVeu = document.getElementById("boto-veu-control");
+            botoVeu.classList.remove("hidden");
+        } else {
+            // Ocultar el botó de veu
+            const botoVeu = document.getElementById("boto-veu-control");
+            botoVeu.classList.add("hidden");
+        }
+    }
+
     configUiElements() {
         // Botó de configuració
         const botoConfig = document.getElementById('boto-configuracio');
@@ -205,6 +218,7 @@ export class AplicacioTraductor {
         const mostrarApiKey = document.getElementById('mostrar-api-key');
         const veuOriginalSelect = document.getElementById('veu-original');
         const veuTraduida = document.getElementById('veu-traduida');
+        const activarOrdresVeu = document.getElementById('activar-ordres-veu');
 
         const idiomaOriginalDef = document.getElementById('idioma-original');
         const idiomaTraduccioDef = document.getElementById('idioma-traduccio');
@@ -215,6 +229,8 @@ export class AplicacioTraductor {
         // Carregar les veus configurades
         veuOriginalSelect.value = this.gestorOpenAI.getVeuOriginal();
         veuTraduida.value = this.gestorOpenAI.getVeuTraduida();
+        
+        this.estatVisibilitatBotoVeu(activarOrdresVeu);
 
         botoVeu.addEventListener("mousedown", async () => {
             botoVeu.classList.remove("bg-blue-600", "hover:bg-blue-700");
@@ -307,15 +323,19 @@ export class AplicacioTraductor {
         const veuTraduida = document.getElementById('veu-traduida');
         const idiomaOriginalDef = document.getElementById('idioma-original');
         const idiomaTraduccioDef = document.getElementById('idioma-traduccio');
+        const activarOrdresVeu = document.getElementById('activar-ordres-veu');
 
         this.gestorOpenAI.setApiKey(apiKeyInput.value);
         this.gestorOpenAI.setVeuOriginal(veuOriginalSelect.value);
         this.gestorOpenAI.setVeuTraduida(veuTraduida.value);
         this.gestorOpenAI.setIdiomaOriginal(idiomaOriginalDef.value);
         this.gestorOpenAI.setIdiomaTraduccio(idiomaTraduccioDef.value);
+        this.gestorOpenAI.setActivarOrdresVeu(activarOrdresVeu.checked);
         this.tancaModalConfiguracio()
         this.comprovarConfiguracio();
+        this.configUiElements()
     }
+
 
     tancaModalConfiguracio() {
         // const modalConfig = document.getElementById('modal-configuracio');

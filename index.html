@@ -245,37 +245,37 @@
                                 </div>
                             </div>
 
-                                    <!-- Nou botó per capturar des de la càmera -->
-        <div class="mb-4 text-center">
-            <button id="boto-camera" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200 cursor-pointer flex items-center justify-center mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-                </svg>
-                <span data-traduccio="camera">Usar càmera</span>
-            </button>
-        </div>
-        
-<!-- Modificació de la secció de càmera a index.html -->
-<div id="seccio-camera" class="hidden mb-4">
-    <div class="relative">
-        <video id="video-camera" class="w-full h-auto rounded-lg" autoplay playsinline></video>
-        <div class="absolute bottom-4 left-0 right-0 flex justify-center">
-            <button id="capturar-imatge" class="px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none shadow-md">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-                </svg>
-                <span data-traduccio="capturar">Capturar</span>
-            </button>
-        </div>
-        <button id="tancar-camera" class="absolute top-2 right-2 p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-            </svg>
-        </button>
-    </div>
-    <!-- Canvas per capturar la imatge (ocult) -->
-    <canvas id="canvas-camera" class="hidden"></canvas>
-</div>
+                            <!-- Nou botó per capturar des de la càmera -->
+                            <div class="mb-4 text-center">
+                                <button id="boto-camera" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 hover:bg-blue-600 rounded-lg transition-colors duration-200 cursor-pointer flex items-center justify-center mx-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                                    </svg>
+                                    <span data-traduccio="camera">Usar càmera</span>
+                                </button>
+                            </div>
+                            
+                            <!-- Modificació de la secció de càmera a index.html -->
+                            <div id="seccio-camera" class="hidden mb-4">
+                                <div class="relative">
+                                    <video id="video-camera" class="w-full h-auto rounded-lg" autoplay playsinline></video>
+                                    <div class="absolute bottom-4 left-0 right-0 flex justify-center">
+                                        <button id="capturar-imatge" class="px-6 py-3 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline-block" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+                                            </svg>
+                                            <span data-traduccio="capturar">Capturar</span>
+                                        </button>
+                                    </div>
+                                    <button id="tancar-camera" class="absolute top-2 right-2 p-2 bg-gray-800 text-white rounded-full hover:bg-gray-700 focus:outline-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <!-- Canvas per capturar la imatge (ocult) -->
+                                <canvas id="canvas-camera" class="hidden"></canvas>
+                            </div>
                             
                             <!-- Previsualització de la imatge pujada -->
                             <div id="previsualitzacio-imatge" class="hidden mt-4 mb-4">
@@ -606,6 +606,20 @@
                                     <option value="">Selecciona...</option>
                                 </select>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Secció de configuració d'idiomes -->
+                    <div class="border-t border-gray-200 dark:border-gray-700 pt-4 mt-4">
+                        <h3 class="text-md font-semibold text-gray-800 dark:text-white mb-3"
+                            data-traduccio="configuració_idiomes">Ordres per veu</h3>
+                        <div class="flex items-center mt-2">
+                            <input type="checkbox" id="activar-ordres-veu" class="mr-2" checked>
+                            <label for="activar-ordres-veu" 
+                                    class="text-sm text-gray-600 dark:text-gray-400"
+                                    data-traduccio="mostrar_clau_api">
+                                Activar ordres per veu
+                            </label>
                         </div>
                     </div>
                     
